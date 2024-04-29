@@ -82,7 +82,6 @@ void deleteRectangle(Display *display, Window &window, GC &gc, int screen,
 // Global Variables
 bool running;
 const Force gravity(0, 1);
-auto frameStartTime = std::chrono::high_resolution_clock::now();
 
 int main(int argc, char *argv[]) {
   auto player =
@@ -95,10 +94,20 @@ int main(int argc, char *argv[]) {
   std::tie(display, window, gc, screen) = setupWindow();
 
   running = true;
+  auto frameStartTime = std::chrono::high_resolution_clock::now();
 
   while (running) {
+    auto frameEndTime = std::chrono::high_resolution_clock::now();
+    auto frameTimeElapsed =
+        std::chrono::duration_cast<std::chrono::milliseconds>(frameEndTime -
+                                                              frameStartTime);
+
     handleEvents(display, player);
-    animate(display, window, gc, screen, player);
+
+    if (frameTimeElapsed.count() >= 40) {
+      frameStartTime = std::chrono::high_resolution_clock::now();
+      animate(display, window, gc, screen, player);
+    }
   }
 
   XFreeGC(display, gc);
@@ -153,15 +162,10 @@ void handleEvents(Display *display, Rectangle &player) {
 
 void animate(Display *display, Window &window, GC &gc, int screen,
              Rectangle &player) {
+
   deleteRectangle(display, window, gc, screen, player);
 
-  auto frameEndTime = std::chrono::high_resolution_clock::now();
-  auto frameTimeElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-      frameEndTime - frameStartTime);
-  if (frameTimeElapsed.count() >= 40) {
-    frameStartTime = std::chrono::high_resolution_clock::now();
-    player.applyForce(gravity).updateCoordinates();
-  }
+  player.applyForce(gravity).updateCoordinates();
 
   XFillRectangle(display, window, gc, player.x, player.y, player.width,
                  player.height);
