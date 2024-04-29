@@ -1,5 +1,6 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
+#include <X11/keysym.h>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -9,7 +10,7 @@
 // WINDOW CONSTANTS
 
 #define WINDOW_WIDTH 400
-#define WINDOW_HEIGHT 300
+#define WINDOW_HEIGHT 450
 
 #define WINDOW_X 0
 #define WINDOW_Y 0
@@ -18,7 +19,7 @@
 
 // OBJECTS CONSTANTS
 
-#define FLOOR_HEIGHT 30
+#define FLOOR_HEIGHT 0
 #define FLOOR_Y WINDOW_HEIGHT - FLOOR_HEIGHT
 
 #define RECTANGLE_WIDTH 30
@@ -128,7 +129,7 @@ std::tuple<Display *, Window, GC, int> setupWindow() {
   Window window = XCreateSimpleWindow(
       display, RootWindow(display, screen), WINDOW_X, WINDOW_Y, WINDOW_WIDTH,
       WINDOW_HEIGHT, BORDER_WIDTH, BlackPixel(display, screen),
-      WhitePixel(display, screen));
+      BlackPixel(display, screen));
 
   XSelectInput(display, window, ExposureMask | KeyPressMask);
   XMapWindow(display, window);
@@ -148,13 +149,22 @@ void handleEvents(Display *display, Rectangle &player) {
     case Expose:
       // Handle expose event
       break;
-    case KeyPress:
+    case KeyPress: {
       // Handle key press event
-
-      if (player.y == RECTANGLE_Y) {
+      KeySym key = XLookupKeysym(&event.xkey, 0);
+      switch (key) {
+      case XK_space:
         player.applyForce(jump);
+        break;
+      case XK_q:
+        running = false;
+        break;
+      default:
+        break;
       }
-      //      running = false;
+      break;
+    }
+    default:
       break;
     }
   }
@@ -173,8 +183,8 @@ void animate(Display *display, Window &window, GC &gc, int screen,
 
 void deleteRectangle(Display *display, Window &window, GC &gc, int screen,
                      Rectangle &player) {
-  XSetForeground(display, gc, WhitePixel(display, screen));
+  XSetForeground(display, gc, BlackPixel(display, screen));
   XFillRectangle(display, window, gc, player.x, player.y, player.width,
                  player.height);
-  XSetForeground(display, gc, BlackPixel(display, screen));
+  XSetForeground(display, gc, WhitePixel(display, screen));
 }
