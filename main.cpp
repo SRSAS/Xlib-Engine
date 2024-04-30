@@ -97,6 +97,7 @@ void deleteRectangle(Display *display, Window &window, GC &gc, int screen,
                      Rectangle &player);
 void bounceBack(Rectangle &player);
 bool isKeyDown(Display *display, KeySym key);
+void updateWindowSize(Display *display, Window &window);
 
 int main(int argc, char *argv[]) {
   auto player =
@@ -144,7 +145,8 @@ std::tuple<Display *, Window, GC, int> setupWindow() {
       WINDOW_HEIGHT, BORDER_WIDTH, BlackPixel(display, screen),
       BlackPixel(display, screen));
 
-  XSelectInput(display, window, KeyPressMask | KeyReleaseMask| StructureNotifyMask);
+  XSelectInput(display, window,
+               KeyPressMask | KeyReleaseMask | StructureNotifyMask);
   XMapWindow(display, window);
 
   GC gc = XCreateGC(display, window, 0, nullptr);
@@ -159,11 +161,7 @@ void handleEvents(Display *display, Window &window, Rectangle &player) {
     XNextEvent(display, &event);
 
     switch (event.type) {
-    case Expose:
-      // Handle expose event
-      break;
     case KeyPress: {
-      // Handle key press event
       switch (XLookupKeysym(&event.xkey, 0)) {
       case XK_space:
         player.applyForce(jump);
@@ -182,6 +180,7 @@ void handleEvents(Display *display, Window &window, Rectangle &player) {
       }
       break;
     }
+
     case KeyRelease: {
       switch (XLookupKeysym(&event.xkey, 0)) {
       case XK_Right:
@@ -195,17 +194,23 @@ void handleEvents(Display *display, Window &window, Rectangle &player) {
       }
       break;
     }
-    case ConfigureNotify:
-      XWindowAttributes attributes;
-      XGetWindowAttributes(display, window, &attributes);
-      windowWidth = attributes.width;
-      windowHeight = attributes.height;
-      std::cout << "ConfigueNotify: Possible window size change" << std::endl;
+
+    case ConfigureNotify: {
+      updateWindowSize(display, window);
       break;
+    }
+
     default:
       break;
     }
   }
+}
+
+void updateWindowSize(Display *display, Window &window) {
+  XWindowAttributes attributes;
+  XGetWindowAttributes(display, window, &attributes);
+  windowWidth = attributes.width;
+  windowHeight = attributes.height;
 }
 
 void animate(Display *display, Window &window, GC &gc, int screen,
@@ -219,12 +224,10 @@ void animate(Display *display, Window &window, GC &gc, int screen,
 
   if (leftPressed) {
     player.x -= 10;
-    leftPressed = isKeyDown(display, XK_Left);
   }
 
   if (rightPressed) {
     player.x += 10;
-    rightPressed = isKeyDown(display, XK_Right);
   }
 
   deleteRectangle(display, window, gc, screen, tempPlayer);
@@ -234,19 +237,6 @@ void animate(Display *display, Window &window, GC &gc, int screen,
 }
 
 void bounceBack(Rectangle &player) { player.speedY = (-player.speedY * 2) / 3; }
-
-bool isKeyDown(Display *display, KeySym key) {
-  KeyCode targetCode = XKeysymToKeycode(display, key);
-
-  int targetByte = targetCode / 8;
-  int targetBit = targetCode % 8;
-  int targetMask = 1 << targetBit;
-
-  char keysReturn[32] = {0};
-  XQueryKeymap(display, keysReturn);
-
-  return (keysReturn[targetByte] & targetMask);
-}
 
 void deleteRectangle(Display *display, Window &window, GC &gc, int screen,
                      Rectangle &player) {
