@@ -9,8 +9,8 @@
 
 // WINDOW CONSTANTS
 
-#define WINDOW_WIDTH 896
-#define WINDOW_HEIGHT 473
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 400
 
 #define WINDOW_X 0
 #define WINDOW_Y 0
@@ -37,6 +37,14 @@ struct Force {
   Force(int x, int y) : x(x), y(y) {}
 };
 
+// Global Variables
+bool running;
+bool leftPressed = false, rightPressed = false;
+const Force gravity(0, 1);
+const Force leftMovement(-1, 0);
+const Force rightMovement(1, 0);
+int windowWidth = WINDOW_WIDTH, windowHeight = WINDOW_HEIGHT;
+
 struct Rectangle {
   int x;
   int y;
@@ -54,13 +62,13 @@ struct Rectangle {
     y += speedY;
 
     if (x <= 0) {
-        x = 0;
-    } else if (x >= WINDOW_WIDTH - width) {
-        x = WINDOW_WIDTH - width;
+      x = 0;
+    } else if (x >= windowWidth - width) {
+      x = windowWidth - width;
     }
 
-    if (y >= RECTANGLE_Y) {
-      y = RECTANGLE_Y;
+    if (y >= windowHeight - height) {
+      y = windowHeight - height;
     } else if (y <= 0) {
       y = 0;
     }
@@ -72,7 +80,7 @@ struct Rectangle {
     speedX += force.x;
     speedY += force.y;
 
-    if (y >= RECTANGLE_Y && speedY > 0) {
+    if (y >= windowHeight - height && speedY > 0) {
       speedY = 0;
     }
 
@@ -82,20 +90,13 @@ struct Rectangle {
 
 // Function Declarations
 std::tuple<Display *, Window, GC, int> setupWindow();
-void handleEvents(Display *display, Rectangle &player);
+void handleEvents(Display *display, Window &window, Rectangle &player);
 void animate(Display *display, Window &window, GC &gc, int screen,
              Rectangle &player);
 void deleteRectangle(Display *display, Window &window, GC &gc, int screen,
                      Rectangle &player);
 void bounceBack(Rectangle &player);
 bool isKeyDown(Display *display, KeySym key);
-
-// Global Variables
-bool running;
-bool leftPressed = false, rightPressed = false;
-const Force gravity(0, 1);
-const Force leftMovement(-1, 0);
-const Force rightMovement(1, 0);
 
 int main(int argc, char *argv[]) {
   auto player =
@@ -115,8 +116,7 @@ int main(int argc, char *argv[]) {
     auto frameTimeElapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(frameEndTime -
                                                               frameStartTime);
-
-    handleEvents(display, player);
+    handleEvents(display, window, player);
 
     if (frameTimeElapsed.count() >= 30) {
       frameStartTime = std::chrono::high_resolution_clock::now();
@@ -144,7 +144,7 @@ std::tuple<Display *, Window, GC, int> setupWindow() {
       WINDOW_HEIGHT, BORDER_WIDTH, BlackPixel(display, screen),
       BlackPixel(display, screen));
 
-  XSelectInput(display, window, ExposureMask | KeyPressMask);
+  XSelectInput(display, window, KeyPressMask | KeyReleaseMask| StructureNotifyMask);
   XMapWindow(display, window);
 
   GC gc = XCreateGC(display, window, 0, nullptr);
@@ -152,7 +152,7 @@ std::tuple<Display *, Window, GC, int> setupWindow() {
   return std::make_tuple(display, window, gc, screen);
 }
 
-void handleEvents(Display *display, Rectangle &player) {
+void handleEvents(Display *display, Window &window, Rectangle &player) {
   Force jump(0, -20);
   XEvent event;
   while (XPending(display) > 0) {
@@ -195,6 +195,13 @@ void handleEvents(Display *display, Rectangle &player) {
       }
       break;
     }
+    case ConfigureNotify:
+      XWindowAttributes attributes;
+      XGetWindowAttributes(display, window, &attributes);
+      windowWidth = attributes.width;
+      windowHeight = attributes.height;
+      std::cout << "ConfigueNotify: Possible window size change" << std::endl;
+      break;
     default:
       break;
     }
@@ -226,7 +233,7 @@ void animate(Display *display, Window &window, GC &gc, int screen,
                  player.height);
 }
 
-void bounceBack(Rectangle &player) { player.speedY = (-player.speedY * 2)/ 3; }
+void bounceBack(Rectangle &player) { player.speedY = (-player.speedY * 2) / 3; }
 
 bool isKeyDown(Display *display, KeySym key) {
   KeyCode targetCode = XKeysymToKeycode(display, key);
