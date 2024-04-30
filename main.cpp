@@ -9,8 +9,8 @@
 
 // WINDOW CONSTANTS
 
-#define WINDOW_WIDTH 400
-#define WINDOW_HEIGHT 450
+#define WINDOW_WIDTH 896
+#define WINDOW_HEIGHT 473
 
 #define WINDOW_X 0
 #define WINDOW_Y 0
@@ -19,7 +19,7 @@
 
 // OBJECTS CONSTANTS
 
-#define FLOOR_HEIGHT 0
+#define FLOOR_HEIGHT 30
 #define FLOOR_Y WINDOW_HEIGHT - FLOOR_HEIGHT
 
 #define RECTANGLE_WIDTH 30
@@ -53,8 +53,16 @@ struct Rectangle {
     x += speedX;
     y += speedY;
 
+    if (x <= 0) {
+        x = 0;
+    } else if (x >= WINDOW_WIDTH - width) {
+        x = WINDOW_WIDTH - width;
+    }
+
     if (y >= RECTANGLE_Y) {
       y = RECTANGLE_Y;
+    } else if (y <= 0) {
+      y = 0;
     }
 
     return *this;
@@ -79,10 +87,15 @@ void animate(Display *display, Window &window, GC &gc, int screen,
              Rectangle &player);
 void deleteRectangle(Display *display, Window &window, GC &gc, int screen,
                      Rectangle &player);
+void bounceBack(Rectangle &player);
+bool isKeyDown(Display *display, KeySym key);
 
 // Global Variables
 bool running;
+bool leftPressed = false, rightPressed = false;
 const Force gravity(0, 1);
+const Force leftMovement(-1, 0);
+const Force rightMovement(1, 0);
 
 int main(int argc, char *argv[]) {
   auto player =
@@ -105,7 +118,7 @@ int main(int argc, char *argv[]) {
 
     handleEvents(display, player);
 
-    if (frameTimeElapsed.count() >= 40) {
+    if (frameTimeElapsed.count() >= 30) {
       frameStartTime = std::chrono::high_resolution_clock::now();
       animate(display, window, gc, screen, player);
     }
@@ -140,7 +153,7 @@ std::tuple<Display *, Window, GC, int> setupWindow() {
 }
 
 void handleEvents(Display *display, Rectangle &player) {
-  Force jump(0, -15);
+  Force jump(0, -20);
   XEvent event;
   while (XPending(display) > 0) {
     XNextEvent(display, &event);
@@ -151,13 +164,31 @@ void handleEvents(Display *display, Rectangle &player) {
       break;
     case KeyPress: {
       // Handle key press event
-      KeySym key = XLookupKeysym(&event.xkey, 0);
-      switch (key) {
+      switch (XLookupKeysym(&event.xkey, 0)) {
       case XK_space:
         player.applyForce(jump);
         break;
       case XK_q:
         running = false;
+        break;
+      case XK_Right:
+        rightPressed = true;
+        break;
+      case XK_Left:
+        leftPressed = true;
+        break;
+      default:
+        break;
+      }
+      break;
+    }
+    case KeyRelease: {
+      switch (XLookupKeysym(&event.xkey, 0)) {
+      case XK_Right:
+        rightPressed = false;
+        break;
+      case XK_Left:
+        leftPressed = false;
         break;
       default:
         break;
@@ -172,13 +203,42 @@ void handleEvents(Display *display, Rectangle &player) {
 
 void animate(Display *display, Window &window, GC &gc, int screen,
              Rectangle &player) {
+  player.applyForce(gravity);
+  auto tempPlayer = Rectangle(player.x, player.y, player.width, player.height);
 
-  deleteRectangle(display, window, gc, screen, player);
+  if (player.y <= 0) {
+    bounceBack(player);
+  }
 
-  player.applyForce(gravity).updateCoordinates();
+  if (leftPressed) {
+    player.x -= 10;
+    leftPressed = isKeyDown(display, XK_Left);
+  }
 
+  if (rightPressed) {
+    player.x += 10;
+    rightPressed = isKeyDown(display, XK_Right);
+  }
+
+  deleteRectangle(display, window, gc, screen, tempPlayer);
+  player.updateCoordinates();
   XFillRectangle(display, window, gc, player.x, player.y, player.width,
                  player.height);
+}
+
+void bounceBack(Rectangle &player) { player.speedY = (-player.speedY * 2)/ 3; }
+
+bool isKeyDown(Display *display, KeySym key) {
+  KeyCode targetCode = XKeysymToKeycode(display, key);
+
+  int targetByte = targetCode / 8;
+  int targetBit = targetCode % 8;
+  int targetMask = 1 << targetBit;
+
+  char keysReturn[32] = {0};
+  XQueryKeymap(display, keysReturn);
+
+  return (keysReturn[targetByte] & targetMask);
 }
 
 void deleteRectangle(Display *display, Window &window, GC &gc, int screen,
