@@ -1,0 +1,3 @@
+/home/sebas/Documents/personalProjects/Xlib-Engine/build/CMakeFiles/game.dir
+/home/sebas/Documents/personalProjects/Xlib-Engine/build/CMakeFiles/edit_cache.dir
+/home/sebas/Documents/personalProjects/Xlib-Engine/build/CMakeFiles/rebuild_cache.dir

@@ -7,6 +7,7 @@
 #include <ostream>
 #include <tuple>
 
+#include "EngineConfig.h"
 // WINDOW CONSTANTS
 
 #define WINDOW_WIDTH 800
@@ -100,6 +101,10 @@ bool isKeyDown(Display *display, KeySym key);
 void updateWindowSize(Display *display, Window &window);
 
 int main(int argc, char *argv[]) {
+  std::cout << "Running game on Xlib_Engine, version: "
+            << Xlib_Engine_VERSION_MAJOR << "." << Xlib_Engine_VERSION_MAJOR
+            << std::endl;
+
   auto player =
       Rectangle(RECTANGLE_X, RECTANGLE_Y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
 

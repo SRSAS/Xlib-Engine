@@ -1,0 +1,2 @@
+#define Xlib_Engine_VERSION_MAJOR @Xlib_Engine_VERSION_MAJOR@
+#define Xlib_Engine_VERSION_MINOR @Xlib_Engine_VERSION_MINOR@
