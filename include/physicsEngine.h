@@ -26,25 +26,23 @@ struct PhysicsEngine {
 
   // Objects movement
   virtual void playerJump();
-  virtual void playerMove(physics::Movement movement);
-  virtual void setPlayerAt(int x, int y);
-  virtual void playerApplyForce(physics::Force force);
+  virtual void setPlayerAt(physics::Position2D position);
+  virtual void playerApplyForce(physics::Force2D force);
+  virtual void setPlayerXSpeed(int speed);
+  virtual void setPlayerYSpeed(int speed);
+  virtual void setPlayerSpeed(physics::Speed2D);
 
-  virtual void stopPlayerMovement();
-  virtual void stopPlayerXMovement();
-  virtual void stopPlayerYMovement();
-
-  virtual void jumpObject(std::shared_ptr<GameObject> &gameObject);
-  virtual void moveObject(std::shared_ptr<GameObject> &gameObject,
-                          physics::Movement movement);
-  virtual void setObjectAt(std::shared_ptr<GameObject> &gameObject, int x,
-                           int y);
+  virtual void objectJump(std::shared_ptr<GameObject> &gameObject);
+  virtual void setObjectAt(std::shared_ptr<GameObject> &gameObject,
+                           physics::Position2D position);
   virtual void objectApplyForce(std::shared_ptr<GameObject> &gameObject,
-                                physics::Force force);
-
-  virtual void stopObjectMovement(std::shared_ptr<GameObject> &gameObject);
-  virtual void stopObjectXMovement(std::shared_ptr<GameObject> &gameObject);
-  virtual void stopObjectYMovement(std::shared_ptr<GameObject> &gameObject);
+                                physics::Force2D force);
+  virtual void setObjectXSpeed(std::shared_ptr<GameObject> &gameObject,
+                               int speed);
+  virtual void setObjectYSpeed(std::shared_ptr<GameObject> &gameObject,
+                               int speed);
+  virtual void setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
+                              physics::Speed2D);
 
   // Player movement utilities
   virtual void playerSetWalkingSpeed(int speed);
@@ -57,8 +55,8 @@ struct PhysicsEngine {
 };
 
 struct XPhysicsEngine : Observable, PhysicsEngine {
-  physics::Force gravity;
-  physics::Force jump;
+  physics::Force2D gravity;
+  physics::Force2D jump;
 
   int worldWidth;
   int worldHeight;
@@ -106,25 +104,23 @@ public:
 
   // Objects movement
   void playerJump() override;
-  void playerMove(physics::Movement movement) override;
-  void setPlayerAt(int x, int y) override;
-  void playerApplyForce(physics::Force force) override;
+  void setPlayerAt(physics::Position2D position) override;
+  void playerApplyForce(physics::Force2D force) override;
+  void setPlayerXSpeed(int speed) override;
+  void setPlayerYSpeed(int speed) override;
+  void setPlayerSpeed(physics::Speed2D) override;
 
-  void stopPlayerMovement() override;
-  void stopPlayerXMovement() override;
-  void stopPlayerYMovement() override;
-
-  void jumpObject(std::shared_ptr<GameObject> &gameObject) override;
-  void moveObject(std::shared_ptr<GameObject> &gameObject,
-                  physics::Movement movement) override;
-  void setObjectAt(std::shared_ptr<GameObject> &gameObject, int x,
-                   int y) override;
+  void objectJump(std::shared_ptr<GameObject> &gameObject) override;
+  void setObjectAt(std::shared_ptr<GameObject> &gameObject,
+                   physics::Position2D position) override;
   void objectApplyForce(std::shared_ptr<GameObject> &gameObject,
-                        physics::Force force) override;
-
-  void stopObjectMovement(std::shared_ptr<GameObject> &gameObject) override;
-  void stopObjectXMovement(std::shared_ptr<GameObject> &gameObject) override;
-  void stopObjectYMovement(std::shared_ptr<GameObject> &gameObject) override;
+                        physics::Force2D force) override;
+  void setObjectXSpeed(std::shared_ptr<GameObject> &gameObject,
+                       int speed) override;
+  void setObjectYSpeed(std::shared_ptr<GameObject> &gameObject,
+                       int speed) override;
+  void setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
+                      physics::Speed2D) override;
 
   // Player movement utilities
   void playerSetWalkingSpeed(int speed) override;

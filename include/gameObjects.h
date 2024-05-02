@@ -1,40 +1,44 @@
 #ifndef GAME_OBJECTS_H
 #define GAME_OBJECTS_H
 
-#include <memory>
 #include "designPatterns.h"
+#include <memory>
 
 struct Rectangle;
 
 struct GameObject : DisplayVisitable {
-  const int id;
+  const double id;
 
-  int x;
-  int y;
-  int width;
-  int height;
+  double x;
+  double y;
+  double width;
+  double height;
 
-  int hitboxWidth;
-  int hitboxHeight;
+  double hitboxWidth;
+  double hitboxHeight;
 
-  int speedX = 0;
-  int speedY = 0;
+  double speedX = 0;
+  double speedY = 0;
 
+  double accelerationX = 0;
+  double accelerationY = 0;
 
+  double mass;
 
-  GameObject(int id): id(id) {}
+  GameObject(double id) : id(id) {}
 };
 
 typedef enum { RECTANGLE } GameObjectType;
 
 struct Rectangle : GameObject {
-  Rectangle(int id, int x, int y, int width, int height); 
+  Rectangle(double id, double x, double y, double width, double height,
+            double mass);
 
   void accept(VisitorDisplay visitor);
 };
 
 struct GameObjectFactory {
-  std::shared_ptr<GameObject> createGameObject(GameObjectType type, int id);
+  std::shared_ptr<GameObject> createGameObject(GameObjectType type, double id);
 };
 
 #endif // !GAME_OBJECTS_H
