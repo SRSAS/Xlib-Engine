@@ -8,18 +8,6 @@
 #include <memory>
 #include <vector>
 
-#define Q_PRESSED_MASK 1
-#define SPACE_PRESSED_MASK 1 << 1
-#define LEFT_PRESSED_MASK 1 << 2
-#define RIGHT_PRESSED_MASK 1 << 3
-
-#define FULL_MASK std::pwd(2, 4) - 1
-
-#define Q_UNPRESSED_MASK FULL_MASK ^ Q_PRESSED_MASK
-#define SPACE_UNPRESSED_MASK FULL_MASK ^ SPACE_PRESSED_MASK
-#define LEFT_UNPRESSED_MASK FULL_MASK ^ LEFT_PRESSED_MASK
-#define RIGHT_UNPRESSED_MASK FULL_MASK ^ RIGHT_PRESSED_MASK
-
 #define WINDOW_DEFAULT_X 0
 #define WINDOW_DEFAULT_Y 0
 
@@ -28,6 +16,13 @@ struct Displayable {
   std::shared_ptr<DisplayVisitable> displayable;
 
   Displayable(std::shared_ptr<DisplayVisitable> dv);
+};
+
+enum Key {
+    KEY_SPACE,
+    KEY_Q,
+    KEY_LEFT,
+    KEY_RIGHT
 };
 
 class DisplayManager {
@@ -40,6 +35,9 @@ class DisplayManager {
   virtual void erase();
 
   virtual void handleEvents();
+  
+  virtual const std::vector<Key> getKeyPresses();
+  virtual void clearKeyPresses();
 };
 
 class XManager : VisitorDisplay, Observer, Observable, DisplayManager {
@@ -47,6 +45,8 @@ class XManager : VisitorDisplay, Observer, Observable, DisplayManager {
   Window window;
   GC gc;
   int screenNum;
+
+  std::vector<Key> keysPressed;
 
   int windowWidth, windowHeight;
 
@@ -59,8 +59,6 @@ class XManager : VisitorDisplay, Observer, Observable, DisplayManager {
   void visitRectangle(Rectangle &rectangle) override;
 
 public:
-  char keyMask = 0;
-
   void addObserver(Observer *observer) override;
   void removeObserver(Observer *observer) override;
   void notifyAll() override;
@@ -77,6 +75,9 @@ public:
   void erase() override;
 
   void handleEvents() override;
+
+  const std::vector<Key> getKeyPresses() override;
+  void clearKeyPresses() override;
 };
 
 #endif

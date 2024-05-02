@@ -4,6 +4,7 @@
 #include "XManager.h"
 #include "gameObjects.h"
 #include "physicsEngine.h"
+#include <functional>
 #include <memory>
 
 class GameEngine : Observable {
@@ -14,6 +15,8 @@ class GameEngine : Observable {
   int gameObjectInstantiationCount = 0;
 
   std::vector<Observer *> observers;
+
+  void handleKeyPresses();
 
 public:
   GameEngine(int windowWidth, int windowHeight, int borderWidth);
@@ -65,9 +68,7 @@ public:
   void setInvisible(int objectID);
   void setVisible(int objectID);
 
-  bool spaceKeyPressed();
-  bool LeftKeyPressed();
-  bool RightKeyPressed();
+  void onKeyPressed(Key key, std::function<void(const GameEngine&)> keyHandler);
 };
 
 #endif // !XLIB_ENGINE_H

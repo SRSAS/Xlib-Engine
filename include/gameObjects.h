@@ -20,6 +20,8 @@ struct GameObject : DisplayVisitable {
   int speedX = 0;
   int speedY = 0;
 
+
+
   GameObject(int id): id(id) {}
 };
 
