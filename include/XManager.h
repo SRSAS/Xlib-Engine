@@ -22,6 +22,7 @@ struct Displayable {
 enum Key { NO_KEY, KEY_SPACE, KEY_Q, KEY_LEFT, KEY_RIGHT };
 
 class DisplayManager {
+public:
   virtual void addDisplayable(const std::shared_ptr<DisplayVisitable> object);
   virtual bool
   removeDisplayable(std::shared_ptr<DisplayVisitable> &displayable);
@@ -37,7 +38,7 @@ class DisplayManager {
   virtual void clearKeyPresses();
 };
 
-class XManager : VisitorDisplay, Observer, Observable, DisplayManager {
+class XManager : VisitorDisplay, Observer, Observable, public DisplayManager {
   Display *display;
   Window window;
   GC gc;
@@ -49,8 +50,6 @@ class XManager : VisitorDisplay, Observer, Observable, DisplayManager {
 
   std::vector<std::shared_ptr<Observer>> observers;
 
-  XManager(int windowWidth, int windowHeight, int borderWidth);
-
   void visitRectangle(const Rectangle &rectangle) override;
 
   void updateWindowSize();
@@ -59,6 +58,8 @@ class XManager : VisitorDisplay, Observer, Observable, DisplayManager {
   void removeKeyFromKeysPressed(Key key);
 
 public:
+  XManager(int windowWidth, int windowHeight, int borderWidth);
+
   int windowWidth, windowHeight;
 
   void addObserver(std::shared_ptr<Observer> observer) override;

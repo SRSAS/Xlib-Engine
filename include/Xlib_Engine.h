@@ -6,20 +6,27 @@
 #include "physicsEngine.h"
 #include <functional>
 #include <memory>
+#include <unordered_map>
 
 class GameEngine : Observable {
-  DisplayManager displayManager;
-  PhysicsEngine physicsEngine;
+  DisplayManager *displayManager;
+  PhysicsEngine *physicsEngine;
 
   std::vector<std::shared_ptr<GameObject>> gameObjects;
   int gameObjectInstantiationCount = 0;
 
-  std::vector<Observer *> observers;
+  std::unordered_map<Key, std::function<void(const GameEngine &)>> keyHandlers;
+
+  std::vector<std::shared_ptr<Observer>> observers;
 
   void handleKeyPresses();
 
 public:
-  GameEngine(int windowWidth, int windowHeight, int borderWidth);
+  GameEngine(int windowWidth, int windowHeight, int borderWidth,
+             double gravitationalPull, double jumpImpulse, double walkingSpeed,
+             int frameDuration, bool collisions);
+
+  ~GameEngine();
 
   /**
    * Start the event loop.

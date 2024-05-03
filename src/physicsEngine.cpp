@@ -2,6 +2,9 @@
 #include <chrono>
 #include <memory>
 
+#define FRAME_TIME_DIVISOR 1000.0
+#define BORDER_ELASTICITY 0.5 // TODO add elasticity setting to engine interface
+
 XPhysicsEngine::XPhysicsEngine(double gravityPull, double jumpImpulse,
                                double walkingSpeed, int worldWidth,
                                int worldHeight, int frameTimeDuration,
@@ -123,18 +126,19 @@ void XPhysicsEngine::setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
 
 void XPhysicsEngine::objectUpdateCoordinates(
     std::shared_ptr<GameObject> &gameObject) {
-  gameObject->speed += physics::Speed2D(gameObject->acceleration *
-                                        (frameTimeElapsed.count() / 1000.0));
+  gameObject->speed +=
+      physics::Speed2D(gameObject->acceleration *
+                       (frameTimeElapsed.count() / FRAME_TIME_DIVISOR));
   gameObject->position += physics::Position2D(
-      gameObject->speed * (frameTimeElapsed.count() / 1000.0));
+      gameObject->speed * (frameTimeElapsed.count() / FRAME_TIME_DIVISOR));
 
+  // TODO add elasticity setting to engine interface
   if (isTouchingCeilling(gameObject)) {
     setObjectAtCeillingLevel(gameObject);
     reboundFromYAxis(gameObject);
   }
   if (isTouchingFloor(gameObject)) {
     setObjectAtFloorLevel(gameObject);
-    reboundFromYAxis(gameObject);
   }
   if (isTouchingLeftWall(gameObject)) {
     setObjectAtCeillingLevel(gameObject);
@@ -278,12 +282,14 @@ void XPhysicsEngine::setObjectAtRightWallLevel(
 }
 
 void XPhysicsEngine::reboundFromYAxis(std::shared_ptr<GameObject> &gameObject) {
-  gameObject->acceleration.y = -gameObject->acceleration.y;
+  gameObject->acceleration.y =
+      -(BORDER_ELASTICITY * gameObject->acceleration.y);
   gameObject->speed.y = -gameObject->speed.y;
 }
 
 void XPhysicsEngine::reboundFromXAxis(std::shared_ptr<GameObject> &gameObject) {
-  gameObject->acceleration.x = -gameObject->acceleration.x;
+  gameObject->acceleration.x =
+      -(BORDER_ELASTICITY * gameObject->acceleration.x);
   gameObject->speed.x = -gameObject->speed.x;
 }
 

@@ -8,8 +8,6 @@
 #include "gameObjects.h"
 #include <vector>
 
-using std::vector;
-
 struct Collision {
   std::shared_ptr<GameObject> collider1, collider2;
 
@@ -32,7 +30,7 @@ struct CollisionEngine {
    * @return vector containing all game objects that are colliding with
    * gameObject
    */
-  virtual vector<std::shared_ptr<GameObject>>
+  virtual std::vector<std::shared_ptr<GameObject>>
   getCollisionsWithObject(std::shared_ptr<GameObject> &gameObject);
 
   virtual bool objectsCollided(const std::shared_ptr<GameObject> &o1,
@@ -57,7 +55,7 @@ struct CollisionEngine {
 struct MockCollisionEngine : CollisionEngine {
   std::vector<Collision> getAllCollisions() override;
 
-  vector<std::shared_ptr<GameObject>>
+  std::vector<std::shared_ptr<GameObject>>
   getCollisionsWithObject(std::shared_ptr<GameObject> &gameObject) override;
 
   bool objectsCollided(const std::shared_ptr<GameObject> &o1,
@@ -71,7 +69,7 @@ struct MockCollisionEngine : CollisionEngine {
                              std::shared_ptr<GameObject> &newState) override;
 };
 
-typedef vector<std::shared_ptr<GameObject>> Quadrant;
+typedef std::vector<std::shared_ptr<GameObject>> Quadrant;
 
 /**
  * Engine that detects collisions between game objects
@@ -91,7 +89,7 @@ struct XCollisionEngine : CollisionEngine {
 
   std::vector<Collision> getAllCollisions() override;
 
-  vector<std::shared_ptr<GameObject>>
+  std::vector<std::shared_ptr<GameObject>>
   getCollisionsWithObject(std::shared_ptr<GameObject> &gameObject) override;
 
   bool objectsCollided(const std::shared_ptr<GameObject> &o1,
@@ -111,7 +109,7 @@ private:
    * @param gameObject reference game object
    * @return vector containing all the quadrants that the gameObject is in
    * */
-  const vector<Quadrant> *
+  const std::vector<Quadrant> *
   getObjectQuadrants(const std::shared_ptr<GameObject> &gameObject);
 
   /**
@@ -123,7 +121,7 @@ private:
    * @return vector containing all game objects that are colliding with
    * gameObject inside quadrant
    */
-  vector<std::shared_ptr<GameObject>>
+  std::vector<std::shared_ptr<GameObject>>
   getCollisionsInQuadrant(const std::shared_ptr<GameObject> &gameObject,
                           const Quadrant &quadrant);
   /**
@@ -132,7 +130,7 @@ private:
    * @param gameObject refernece game object
    * @return vector containing the quadrant indexes
    */
-  vector<int>
+  std::vector<int>
   getObjectQuadrantsIndexes(std::shared_ptr<GameObject> &gameObject);
 
   /**
