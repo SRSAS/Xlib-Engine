@@ -30,8 +30,8 @@ XManager::XManager(int windowWidth, int windowHeight, int borderWidth) {
 }
 
 void XManager::visitRectangle(const Rectangle &rectangle) {
-  XFillRectangle(display, window, gc, rectangle.position.x,
-                 rectangle.position.y, rectangle.width, rectangle.height);
+  XFillRectangle(display, window, gc, (int)rectangle.position.x,
+                 (int)rectangle.position.y, rectangle.width, rectangle.height);
 }
 
 void XManager::updateWindowSize() {
@@ -48,9 +48,9 @@ Key XManager::convertXKtoKey(int xk_key) {
   case XK_space:
     return KEY_SPACE;
   case XK_Left:
-    return KEY_SPACE;
+    return KEY_LEFT;
   case XK_Right:
-    return KEY_SPACE;
+    return KEY_RIGHT;
   default:
     return NO_KEY;
   }
