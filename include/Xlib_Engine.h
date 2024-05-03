@@ -29,8 +29,8 @@ public:
   void run();
 
   void notifyAll() override;
-  void addObserver(Observer *observer) override;
-  void removeObserver(Observer *observer) override;
+  void addObserver(std::shared_ptr<Observer> observer) override;
+  void removeObserver(std::shared_ptr<Observer> &observer) override;
 
   void setNewPlayer(GameObjectType, int x, int y, int width, int height);
   int addNewObject(GameObjectType, int x, int y, int width, int height);
@@ -39,22 +39,18 @@ public:
   bool removeGameObject(int objectID);
 
   void playerJump();
-  void playerMove(int x, int y);
   void setPlayerAt(int x, int y);
   void playerApplyForce(int x, int y);
-
-  void stopPlayerMovement();
-  void stopPlayerXMovement();
-  void stopPlayerYMovement();
+  void playerSetXSpeed(int x);
+  void playerSetYSpeed(int y);
+  void playerSetSpeed(int x, int y);
 
   void jumpObject(int objectID);
-  void moveObject(int objectID, int x, int y);
-  void setObjectAt(int objectID, int x, int y);
+  void objectSetAt(int objectID, int x, int y);
   void objectApplyForce(int objectID, int x, int y);
-
-  void stopObjectMovement(int objectID);
-  void stopObjectXMovement(int objectID);
-  void stopObjectYMovement(int objectID);
+  void objectSetXSpeed(int objectID, int x);
+  void objectSetYSpeed(int objectID, int y);
+  void objectSetSpeed(int objectID, int x, int y);
 
   // Player movement utilities
   void playerSetWalkingSpeed(int speed);
@@ -68,7 +64,8 @@ public:
   void setInvisible(int objectID);
   void setVisible(int objectID);
 
-  void onKeyPressed(Key key, std::function<void(const GameEngine&)> keyHandler);
+  void onKeyPressed(Key key,
+                    std::function<void(const GameEngine &)> keyHandler);
 };
 
 #endif // !XLIB_ENGINE_H

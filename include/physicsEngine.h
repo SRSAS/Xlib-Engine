@@ -28,9 +28,10 @@ struct PhysicsEngine {
   virtual void playerJump();
   virtual void setPlayerAt(physics::Position2D position);
   virtual void playerApplyForce(physics::Force2D force);
-  virtual void setPlayerXSpeed(int speed);
-  virtual void setPlayerYSpeed(int speed);
+  virtual void setPlayerXSpeed(double speed);
+  virtual void setPlayerYSpeed(double speed);
   virtual void setPlayerSpeed(physics::Speed2D);
+  virtual void playerUpdateCoordinates();
 
   virtual void objectJump(std::shared_ptr<GameObject> &gameObject);
   virtual void setObjectAt(std::shared_ptr<GameObject> &gameObject,
@@ -38,14 +39,15 @@ struct PhysicsEngine {
   virtual void objectApplyForce(std::shared_ptr<GameObject> &gameObject,
                                 physics::Force2D force);
   virtual void setObjectXSpeed(std::shared_ptr<GameObject> &gameObject,
-                               int speed);
+                               double speed);
   virtual void setObjectYSpeed(std::shared_ptr<GameObject> &gameObject,
-                               int speed);
+                               double speed);
   virtual void setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
                               physics::Speed2D);
+  virtual void objectUpdateCoordinates(std::shared_ptr<GameObject> &gameObject);
 
   // Player movement utilities
-  virtual void playerSetWalkingSpeed(int speed);
+  virtual void playerSetWalkingSpeed(double speed);
   virtual void playerSetWalkingLeft();
   virtual void playerUnsetWalkingLeft();
   virtual void playerSetWalkingRight();
@@ -57,6 +59,7 @@ struct PhysicsEngine {
 struct XPhysicsEngine : Observable, PhysicsEngine {
   physics::Force2D gravity;
   physics::Force2D jump;
+  physics::Force2D walk;
 
   int worldWidth;
   int worldHeight;
@@ -75,18 +78,18 @@ private:
   std::shared_ptr<GameObject> player;
   std::vector<std::shared_ptr<GameObject>> gameObjects;
 
-  int playerWalkingSpeed;
   bool playerWalkingLeft = false;
   bool playerWalkingRight = false;
 
-  std::vector<Observer *> observers;
+  std::vector<std::shared_ptr<Observer>> observers;
 
   CollisionEngine collisionEngine;
   bool collisions = false;
 
 public:
-  XPhysicsEngine(int gravityPull, int jumpImpulse, int worldWidth,
-                 int worldHeight, int frameTimeDuration);
+  XPhysicsEngine(double gravityPull, double jumpImpulse, double walkingSpeed,
+                 int worldWidth, int worldHeight, int frameTimeDuration,
+                 CollisionEngine collisionEngine, bool collisions);
 
   // Add game objects
   void setPlayer(std::shared_ptr<GameObject> player) override;
@@ -106,9 +109,10 @@ public:
   void playerJump() override;
   void setPlayerAt(physics::Position2D position) override;
   void playerApplyForce(physics::Force2D force) override;
-  void setPlayerXSpeed(int speed) override;
-  void setPlayerYSpeed(int speed) override;
+  void setPlayerXSpeed(double speed) override;
+  void setPlayerYSpeed(double speed) override;
   void setPlayerSpeed(physics::Speed2D) override;
+  void playerUpdateCoordinates() override;
 
   void objectJump(std::shared_ptr<GameObject> &gameObject) override;
   void setObjectAt(std::shared_ptr<GameObject> &gameObject,
@@ -116,22 +120,28 @@ public:
   void objectApplyForce(std::shared_ptr<GameObject> &gameObject,
                         physics::Force2D force) override;
   void setObjectXSpeed(std::shared_ptr<GameObject> &gameObject,
-                       int speed) override;
+                       double speed) override;
   void setObjectYSpeed(std::shared_ptr<GameObject> &gameObject,
-                       int speed) override;
+                       double speed) override;
   void setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
                       physics::Speed2D) override;
+  void
+  objectUpdateCoordinates(std::shared_ptr<GameObject> &gameObject) override;
 
   // Player movement utilities
-  void playerSetWalkingSpeed(int speed) override;
+  void playerSetWalkingSpeed(double speed) override;
   void playerSetWalkingLeft() override;
   void playerUnsetWalkingLeft() override;
   void playerSetWalkingRight() override;
   void playerUnsetWalkingRight() override;
 
+  // Collisions
+  void setCollisionsOn();
+  void setCollisionsOff();
+
   // Observable pattern
-  void addObserver(Observer *observer) override;
-  void removeObserver(Observer *observer) override;
+  void addObserver(std::shared_ptr<Observer> observer) override;
+  void removeObserver(std::shared_ptr<Observer> &observer) override;
   void notifyAll() override;
 
   // Event Loop
@@ -144,8 +154,6 @@ public:
   void tick() override;
 
 private:
-  void notify();
-
   bool isTouchingCeilling(std::shared_ptr<GameObject> &gameObject);
   bool isTouchingFloor(std::shared_ptr<GameObject> &gameObject);
   bool isTouchingLeftWall(std::shared_ptr<GameObject> &gameObject);
@@ -155,6 +163,9 @@ private:
   void setObjectAtFloorLevel(std::shared_ptr<GameObject> &gameObject);
   void setObjectAtLeftWallLevel(std::shared_ptr<GameObject> &gameObject);
   void setObjectAtRightWallLevel(std::shared_ptr<GameObject> &gameObject);
+
+  void reboundFromYAxis(std::shared_ptr<GameObject> &gameObject);
+  void reboundFromXAxis(std::shared_ptr<GameObject> &gameObject);
 
   void onCollision(std::shared_ptr<GameObject> &go1,
                    std::shared_ptr<GameObject> &go2);

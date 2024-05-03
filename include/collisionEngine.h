@@ -8,19 +8,22 @@
 #include "gameObjects.h"
 #include <vector>
 
-using std::vector; 
+using std::vector;
 
-typedef vector<GameObject *> Quadrant;
+struct Collision {
+  std::shared_ptr<GameObject> collider1, collider2;
 
-/**
- * Engine that detects collisions between game objects
- */
+  Collision(std::shared_ptr<GameObject> c1, std::shared_ptr<GameObject> c2)
+      : collider1(c1), collider2(c2) {}
+};
+
 struct CollisionEngine {
-  Quadrant gameGrid[GRID_SIZE];
-
-  int width, height;
-
-  CollisionEngine(int width, int height) : width(width), height(height) {}
+  /**
+   * Get all collisions between game objects
+   *
+   * @return vector containing all collisions
+   */
+  virtual std::vector<Collision> getAllCollisions();
 
   /**
    * Get all game objects that are colliding with the given object
@@ -29,15 +32,87 @@ struct CollisionEngine {
    * @return vector containing all game objects that are colliding with
    * gameObject
    */
-  vector<GameObject> getCollisions(GameObject gameObject);
+  virtual vector<std::shared_ptr<GameObject>>
+  getCollisionsWithObject(std::shared_ptr<GameObject> &gameObject);
 
+  virtual bool objectsCollided(const std::shared_ptr<GameObject> &o1,
+                               const std::shared_ptr<GameObject> &o2);
+
+  virtual void addGameObject(std::shared_ptr<GameObject> gameObject);
+
+  virtual void removeGameObject(std::shared_ptr<GameObject> &gameObject);
+
+  /**
+   * Put the game object in the correct quadrants, and remove it from the wrong
+   * quadrants
+   *
+   * @param previousState game object with the state the object was in on the
+   * last update
+   * @param newState game object with the object's current state
+   */
+  virtual void updateObjectQuadrants(GameObject &previousState,
+                                     std::shared_ptr<GameObject> &newState);
+};
+
+struct MockCollisionEngine : CollisionEngine {
+  std::vector<Collision> getAllCollisions() override;
+
+  vector<std::shared_ptr<GameObject>>
+  getCollisionsWithObject(std::shared_ptr<GameObject> &gameObject) override;
+
+  bool objectsCollided(const std::shared_ptr<GameObject> &o1,
+                       const std::shared_ptr<GameObject> &o2) override;
+
+  void addGameObject(std::shared_ptr<GameObject> gameObject) override;
+
+  void removeGameObject(std::shared_ptr<GameObject> &gameObject) override;
+
+  void updateObjectQuadrants(GameObject &previousState,
+                             std::shared_ptr<GameObject> &newState) override;
+};
+
+typedef vector<std::shared_ptr<GameObject>> Quadrant;
+
+/**
+ * Engine that detects collisions between game objects
+ */
+struct XCollisionEngine : CollisionEngine {
+  Quadrant gameGrid[GRID_SIZE];
+
+  int width, height;
+
+  int rows = GRID_ROWS;
+  int columns = GRID_COLUMNS;
+
+  XCollisionEngine(int width, int height) : width(width), height(height) {}
+
+  XCollisionEngine(int width, int height, int rows, int columns)
+      : width(width), height(height), rows(rows), columns(columns) {}
+
+  std::vector<Collision> getAllCollisions() override;
+
+  vector<std::shared_ptr<GameObject>>
+  getCollisionsWithObject(std::shared_ptr<GameObject> &gameObject) override;
+
+  bool objectsCollided(const std::shared_ptr<GameObject> &o1,
+                       const std::shared_ptr<GameObject> &o2) override;
+
+  void addGameObject(std::shared_ptr<GameObject> gameObject) override;
+
+  void removeGameObject(std::shared_ptr<GameObject> &gameObject) override;
+
+  void updateObjectQuadrants(GameObject &previousState,
+                             std::shared_ptr<GameObject> &newState) override;
+
+private:
   /**
    * Get all quadrants that the game object is in
    *
    * @param gameObject reference game object
    * @return vector containing all the quadrants that the gameObject is in
    * */
-  const vector<Quadrant> *getObjectQuadrants(const GameObject &gameObject);
+  const vector<Quadrant> *
+  getObjectQuadrants(const std::shared_ptr<GameObject> &gameObject);
 
   /**
    * Get all game objects that are colliding with the given object, inside the
@@ -48,35 +123,17 @@ struct CollisionEngine {
    * @return vector containing all game objects that are colliding with
    * gameObject inside quadrant
    */
-  vector<GameObject> getCollisionsInQuadrant(const GameObject &gameObject,
-                                             const Quadrant &quadrant);
-  /**
-   * Determine if two game objects have collided
-   *
-   * @param o1 game object 1
-   * @param o2 game object 2
-   * @return True if there is a collision between the objects, False if
-   * otherwise
-   */
-  bool objectsCollided(const GameObject &o1, const GameObject &o2);
-
-  /**
-   * Put the game object in the correct quadrants, and remove it from the wrong
-   * quadrants
-   *
-   * @param previousState game object with the state the object was in on the
-   * last update
-   * @param newState game object with the object's current state
-   */
-  void updateObjectQuadrants(GameObject &previousState, GameObject &newState);
-
+  vector<std::shared_ptr<GameObject>>
+  getCollisionsInQuadrant(const std::shared_ptr<GameObject> &gameObject,
+                          const Quadrant &quadrant);
   /**
    * Get the indexes of the quadrants that the game object is in
    *
    * @param gameObject refernece game object
    * @return vector containing the quadrant indexes
    */
-  vector<int> getObjectQuadrantsIndexes(GameObject &gameObject);
+  vector<int>
+  getObjectQuadrantsIndexes(std::shared_ptr<GameObject> &gameObject);
 
   /**
    * Convert a row and column pair into an index in the game grid
@@ -86,20 +143,6 @@ struct CollisionEngine {
    * @return index equivalent
    */
   int getQuadrantIndex(int row, int column);
-
-  /**
-   * Add game object to the collision engine
-   *
-   * @param gameObject object to be added
-   */
-  void addGameObject(GameObject *gameObject);
-
-  /**
-   * Remove game object from collision engine
-   *
-   * @param gameObject object to be removed
-   */
-  void removeGameObject(GameObject &gameObject);
 };
 
 #endif // !COLLISION_ENGINE_H
