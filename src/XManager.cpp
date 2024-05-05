@@ -1,9 +1,7 @@
 #include "../include/XManager.h"
 #include <X11/keysym.h>
 #include <cstdlib>
-#include <iostream>
 #include <memory>
-#include <ostream>
 
 Displayable::Displayable(std::shared_ptr<DisplayVisitable> &dv) {
   displayable = dv;
@@ -38,7 +36,6 @@ void XManager::destroyWindow() {
 void XManager::createWindow() {
   display = XOpenDisplay(NULL);
   if (display == NULL) {
-    std::cout << "Could not open display." << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -57,8 +54,8 @@ void XManager::createWindow() {
 
 Key XManager::convertXKtoKey(int xk_key) {
   switch (xk_key) {
-  case XK_Q:
-    return KEY_SPACE;
+  case XK_q:
+    return KEY_Q;
   case XK_space:
     return KEY_SPACE;
   case XK_Left:
@@ -74,6 +71,9 @@ void XManager::removeKeyFromKeysPressed(Key key) {
   auto iter = keysPressed.begin();
   while (iter != keysPressed.end() && (*iter) != key) {
     iter++;
+  }
+  if (iter == keysPressed.end()) {
+    return;
   }
   keysPressed.erase(iter);
 }
@@ -190,9 +190,9 @@ void XManager::handleEvents() {
       break;
     }
     case KeyRelease: {
-      int xk_key = XLookupKeysym(&event.xkey, 0);
-      Key pressedKey = convertXKtoKey(xk_key);
-      removeKeyFromKeysPressed(pressedKey);
+      //      int xk_key = XLookupKeysym(&event.xkey, 0);
+      //      Key pressedKey = convertXKtoKey(xk_key);
+      //      removeKeyFromKeysPressed(pressedKey);
       break;
     }
 

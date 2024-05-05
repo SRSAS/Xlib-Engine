@@ -16,7 +16,8 @@ physics::Force2D physics::Force2D::operator*(const double &scalar) const {
 }
 
 physics::Force2D physics::Force2D::operator/(const double &scalar) const {
-  physics::Force2D temp(x / static_cast<double>(scalar), y /static_cast<double>(scalar));
+  physics::Force2D temp(x / static_cast<double>(scalar),
+                        y / static_cast<double>(scalar));
   return temp;
 }
 

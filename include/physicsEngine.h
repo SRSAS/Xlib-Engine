@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-struct PhysicsEngine {
+struct PhysicsEngine : Observable {
   // Add game objects
   virtual void setPlayer(std::shared_ptr<GameObject> player) = 0;
   virtual void addGameObject(std::shared_ptr<GameObject> gameObject) = 0;
@@ -44,7 +44,8 @@ struct PhysicsEngine {
                                double speed) = 0;
   virtual void setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
                               physics::Speed2D) = 0;
-  virtual void objectUpdateCoordinates(std::shared_ptr<GameObject> &gameObject) = 0;
+  virtual void
+  objectUpdateCoordinates(std::shared_ptr<GameObject> &gameObject) = 0;
 
   // Player movement utilities
   virtual void playerSetWalkingSpeed(double speed) = 0;
@@ -60,7 +61,7 @@ struct PhysicsEngine {
   virtual int getWorldHeight() = 0;
 };
 
-struct XPhysicsEngine : Observable, PhysicsEngine {
+struct XPhysicsEngine :  PhysicsEngine {
   physics::Force2D gravity;
   physics::Force2D jump;
   physics::Force2D walk;

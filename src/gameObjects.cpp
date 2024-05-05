@@ -19,9 +19,10 @@ void Rectangle::accept(VisitorDisplay &visitor) {
   visitor.visitRectangle(*this);
 }
 
-std::shared_ptr<GameObject> Rectangle::clone() { 
-    Rectangle copy(*this);
-    return std::make_shared<Rectangle>(copy); }
+std::shared_ptr<GameObject> Rectangle::clone() {
+  Rectangle copy(*this);
+  return std::make_shared<Rectangle>(copy);
+}
 
 std::shared_ptr<GameObject>
 GameObjectFactory::createGameObject(GameObjectType type, int id) {

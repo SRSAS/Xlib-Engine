@@ -38,6 +38,8 @@ class GameEngine : Observable {
   std::unordered_map<Key, std::function<void(GameEngine &)>> keyHandlers;
 
   std::vector<std::shared_ptr<Observer>> observers;
+  FrameObserver frameObserver;
+  WindowChangeObserver windowChangeObserver;
 
   bool exitFlag;
 

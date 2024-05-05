@@ -7,13 +7,16 @@ void FrameObserver::onNotified() { gameEngine->notifyAll(); }
 
 GameEngine::GameEngine(int windowWidth, int windowHeight, int borderWidth,
                        double gravitationalPull, double jumpImpulse,
-                       double walkingSpeed, int frameDuration,
-                       bool collisions) {
+                       double walkingSpeed, int frameDuration, bool collisions)
+    : frameObserver(this), windowChangeObserver(this) {
   auto collisionEngine = new MockCollisionEngine();
   displayManager = new XManager(windowWidth, windowHeight, borderWidth);
   physicsEngine = new XPhysicsEngine(
       gravitationalPull, jumpImpulse, walkingSpeed, windowWidth, windowHeight,
       frameDuration, collisionEngine, collisions);
+  addObserver(std::shared_ptr<Observer>(displayManager));
+  displayManager->addObserver(std::shared_ptr<Observer>(&windowChangeObserver));
+  physicsEngine->addObserver(std::shared_ptr<Observer>(&frameObserver));
 }
 
 GameEngine::~GameEngine() {
@@ -22,11 +25,13 @@ GameEngine::~GameEngine() {
 }
 
 void GameEngine::updateWorldSize() {
+  //  std::cout << "Updating world size!" << std::endl;
   physicsEngine->setWorldSize(displayManager->getWindowWidth(),
                               displayManager->getWindowHeight());
 }
 
 void GameEngine::handleKeyPresses() {
+
   const std::vector<Key> keysPressed = displayManager->getKeyPresses();
   for (auto iter = keysPressed.begin(); iter != keysPressed.end(); iter++) {
     auto handler = keyHandlers.at((*iter));
@@ -40,7 +45,6 @@ GameEngine::createNewGameObject(GameObjectType type, int x, int y, int width,
                                 int height, int mass) {
   std::shared_ptr<GameObject> gameObject =
       gameObjectFactory.createGameObject(type, gameObjectInstantiationCount++);
-
   gameObject->position.x = x;
   gameObject->position.y = y;
 

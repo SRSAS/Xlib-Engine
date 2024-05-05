@@ -21,10 +21,11 @@ struct Displayable {
 
 enum Key { NO_KEY, KEY_SPACE, KEY_Q, KEY_LEFT, KEY_RIGHT };
 
-class DisplayManager {
+class DisplayManager : public VisitorDisplay, public Observer, public Observable {
 public:
   virtual void addDisplayable(std::shared_ptr<DisplayVisitable> object) = 0;
   virtual void setPlayer(std::shared_ptr<DisplayVisitable> player) = 0;
+
   virtual bool
   removeDisplayable(std::shared_ptr<DisplayVisitable> &displayable) = 0;
   virtual void removePlayer() = 0;
@@ -46,7 +47,7 @@ public:
   virtual int getBorderWidth() = 0;
 };
 
-class XManager : VisitorDisplay, Observer, Observable, public DisplayManager {
+class XManager : public DisplayManager {
   Display *display;
   Window window;
   GC gc;

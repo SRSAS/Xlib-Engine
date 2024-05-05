@@ -88,7 +88,7 @@ void XPhysicsEngine::setObjectAt(std::shared_ptr<GameObject> &gameObject,
 }
 
 void XPhysicsEngine::objectApplyForce(std::shared_ptr<GameObject> &gameObject,
-                                physics::Force2D force) {
+                                      physics::Force2D force) {
   gameObject->acceleration += force / gameObject->mass;
 }
 
@@ -145,13 +145,16 @@ void XPhysicsEngine::objectUpdateCoordinates(
   }
   if (isTouchingFloor(gameObject)) {
     setObjectAtFloorLevel(gameObject);
+    // TODO refactor hack
+    gameObject->acceleration.y = 0;
+    gameObject->speed.y = 0;
   }
   if (isTouchingLeftWall(gameObject)) {
-    setObjectAtCeillingLevel(gameObject);
+    setObjectAtLeftWallLevel(gameObject);
     reboundFromXAxis(gameObject);
   }
   if (isTouchingRightWall(gameObject)) {
-    setObjectAtCeillingLevel(gameObject);
+    setObjectAtRightWallLevel(gameObject);
     reboundFromXAxis(gameObject);
   }
 
@@ -240,6 +243,17 @@ void XPhysicsEngine::tick() {
 
   playerApplyForce(gravity);
   playerUpdateCoordinates();
+
+  //  std::cout << "Player state:" << std::endl;
+  //  std::cout << "Position: X = " << player->position.x
+  //            << " Y = " << player->position.y << std::endl;
+  //  std::cout << "Speed: X = " << player->speed.x << " Y = " <<
+  //  player->speed.y
+  //            << std::endl;
+  //  std::cout << "Acceleration: X = " << player->acceleration.x
+  //            << " Y = " << player->acceleration.y << std::endl;
+  //  std::cout << "Mass: " << player->mass << std::endl << std::endl;
+  //
   for (auto iter = gameObjects.begin(); iter != gameObjects.end(); iter++) {
     objectApplyForce((*iter), gravity);
     objectUpdateCoordinates((*iter));
@@ -251,6 +265,7 @@ void XPhysicsEngine::tick() {
 void XPhysicsEngine::setWorldSize(int width, int height) {
   worldWidth = width;
   worldHeight = height;
+  //  std::cout << "Setting world size!" << std::endl;
 }
 int XPhysicsEngine::getWorldWidth() { return worldWidth; }
 int XPhysicsEngine::getWorldHeight() { return worldHeight; }
@@ -271,7 +286,7 @@ bool XPhysicsEngine::isTouchingLeftWall(
 
 bool XPhysicsEngine::isTouchingRightWall(
     std::shared_ptr<GameObject> &gameObject) {
-  return gameObject->position.x + worldWidth >= 0;
+  return gameObject->position.x + gameObject->width >= worldWidth;
 }
 
 void XPhysicsEngine::setObjectAtCeillingLevel(
