@@ -27,8 +27,8 @@ struct FrameObserver : Observer {
 };
 
 class GameEngine : Observable {
-  DisplayManager *displayManager;
-  PhysicsEngine *physicsEngine;
+  std::shared_ptr<DisplayManager> displayManager;
+  std::shared_ptr<PhysicsEngine> physicsEngine;
 
   GameObjectFactory gameObjectFactory;
   std::shared_ptr<GameObject> player;
@@ -38,8 +38,8 @@ class GameEngine : Observable {
   std::unordered_map<Key, std::function<void(GameEngine &)>> keyHandlers;
 
   std::vector<std::shared_ptr<Observer>> observers;
-  FrameObserver frameObserver;
-  WindowChangeObserver windowChangeObserver;
+  std::shared_ptr<FrameObserver> frameObserver;
+  std::shared_ptr<WindowChangeObserver> windowChangeObserver;
 
   bool exitFlag;
 
@@ -54,8 +54,6 @@ public:
   GameEngine(int windowWidth, int windowHeight, int borderWidth,
              double gravitationalPull, double jumpImpulse, double walkingSpeed,
              int frameDuration, bool collisions);
-
-  ~GameEngine();
 
   void updateWorldSize();
 

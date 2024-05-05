@@ -32,6 +32,8 @@ struct PhysicsEngine : Observable {
   virtual void setPlayerYSpeed(double speed) = 0;
   virtual void setPlayerSpeed(physics::Speed2D) = 0;
   virtual void playerUpdateCoordinates() = 0;
+  virtual void playerApplyGravity() = 0;
+  virtual void playerApplyFloorFriction() = 0;
 
   virtual void objectJump(std::shared_ptr<GameObject> &gameObject) = 0;
   virtual void setObjectAt(std::shared_ptr<GameObject> &gameObject,
@@ -46,6 +48,8 @@ struct PhysicsEngine : Observable {
                               physics::Speed2D) = 0;
   virtual void
   objectUpdateCoordinates(std::shared_ptr<GameObject> &gameObject) = 0;
+  virtual void objectApplyGravity(std::shared_ptr<GameObject> &gameObject) = 0;
+  virtual void objectApplyFloorFriction(std::shared_ptr<GameObject> &gameObject) = 0;
 
   // Player movement utilities
   virtual void playerSetWalkingSpeed(double speed) = 0;
@@ -61,10 +65,10 @@ struct PhysicsEngine : Observable {
   virtual int getWorldHeight() = 0;
 };
 
-struct XPhysicsEngine :  PhysicsEngine {
-  physics::Force2D gravity;
+struct XPhysicsEngine : PhysicsEngine {
+  physics::Acceleration2D gravity;
   physics::Force2D jump;
-  physics::Force2D walk;
+  physics::Speed2D walk;
 
   int worldWidth;
   int worldHeight;
@@ -118,6 +122,8 @@ public:
   void setPlayerYSpeed(double speed) override;
   void setPlayerSpeed(physics::Speed2D) override;
   void playerUpdateCoordinates() override;
+  void playerApplyGravity() override;
+  void playerApplyFloorFriction() override;
 
   void objectJump(std::shared_ptr<GameObject> &gameObject) override;
   void setObjectAt(std::shared_ptr<GameObject> &gameObject,
@@ -132,6 +138,8 @@ public:
                       physics::Speed2D) override;
   void
   objectUpdateCoordinates(std::shared_ptr<GameObject> &gameObject) override;
+  void objectApplyGravity(std::shared_ptr<GameObject> &gameObject) override;
+  void objectApplyFloorFriction(std::shared_ptr<GameObject> &gameObject) override;
 
   // Player movement utilities
   void playerSetWalkingSpeed(double speed) override;

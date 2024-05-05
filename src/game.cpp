@@ -3,9 +3,9 @@
 #define INITIAL_WINDOW_WIDTH 400
 #define INITIAL_WINDOW_HEIGHT 300
 #define INITIAL_BORDER_WIDTH 5
-#define INITIAL_GRAVITY 250.0
-#define INITIAL_JUMP_IMPULSE 3000.0
-#define INITIAL_WALKING_SPEED 100.0
+#define INITIAL_GRAVITY 1.0
+#define INITIAL_JUMP_IMPULSE 10.0
+#define INITIAL_WALKING_SPEED 150.0
 #define INITIAL_FRAME_DURATION 30
 #define PLAYER_WIDTH 30
 #define PLAYER_HEIGHT 30
@@ -30,8 +30,16 @@ int main(int argc, char *argv[]) {
     gameEngine.playerSetWalkingLeft();
   });
 
+  engine.onKeyPressed(RELEASE_LEFT, [](GameEngine &gameEngine) -> void {
+    gameEngine.playerUnsetWalkingLeft();
+  });
+
   engine.onKeyPressed(KEY_RIGHT, [](GameEngine &gameEngine) -> void {
     gameEngine.playerSetWalkingRight();
+  });
+
+  engine.onKeyPressed(RELEASE_RIGHT, [](GameEngine &gameEngine) -> void {
+    gameEngine.playerUnsetWalkingRight();
   });
 
   engine.onKeyPressed(NO_KEY, [](GameEngine &gameEngine) -> void {});

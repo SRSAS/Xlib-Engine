@@ -9,9 +9,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(X11 REQUIRED)
 
+include_directories(include)
+
+file(GLOB SOURCES "src/*.cpp")
+
 configure_file(EngineConfig.h.in EngineConfig.h)
 
-add_executable(game main.cpp)
+add_executable(game ${SOURCES})
 
 target_include_directories(game PUBLIC
     "${PROJECT_BINARY_DIR}"

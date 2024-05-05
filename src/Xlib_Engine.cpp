@@ -7,21 +7,22 @@ void FrameObserver::onNotified() { gameEngine->notifyAll(); }
 
 GameEngine::GameEngine(int windowWidth, int windowHeight, int borderWidth,
                        double gravitationalPull, double jumpImpulse,
-                       double walkingSpeed, int frameDuration, bool collisions)
-    : frameObserver(this), windowChangeObserver(this) {
+                       double walkingSpeed, int frameDuration,
+                       bool collisions) {
   auto collisionEngine = new MockCollisionEngine();
-  displayManager = new XManager(windowWidth, windowHeight, borderWidth);
-  physicsEngine = new XPhysicsEngine(
+  displayManager =
+      std::make_shared<XManager>(windowWidth, windowHeight, borderWidth);
+
+  physicsEngine = std::make_shared<XPhysicsEngine>(
       gravitationalPull, jumpImpulse, walkingSpeed, windowWidth, windowHeight,
       frameDuration, collisionEngine, collisions);
-  addObserver(std::shared_ptr<Observer>(displayManager));
-  displayManager->addObserver(std::shared_ptr<Observer>(&windowChangeObserver));
-  physicsEngine->addObserver(std::shared_ptr<Observer>(&frameObserver));
-}
 
-GameEngine::~GameEngine() {
-  delete displayManager;
-  delete physicsEngine;
+    windowChangeObserver = std::make_shared<WindowChangeObserver>(this);
+    frameObserver = std::make_shared<FrameObserver>(this);
+
+  addObserver(displayManager);
+  displayManager->addObserver(windowChangeObserver);
+  physicsEngine->addObserver(frameObserver);
 }
 
 void GameEngine::updateWorldSize() {
@@ -34,8 +35,10 @@ void GameEngine::handleKeyPresses() {
 
   const std::vector<Key> keysPressed = displayManager->getKeyPresses();
   for (auto iter = keysPressed.begin(); iter != keysPressed.end(); iter++) {
-    auto handler = keyHandlers.at((*iter));
-    handler(*this);
+    if (keyHandlers.contains(*iter)) {
+      auto handler = keyHandlers.at(*iter);
+      handler(*this);
+    }
   }
   displayManager->clearKeyPresses();
 }

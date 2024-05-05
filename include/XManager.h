@@ -19,9 +19,21 @@ struct Displayable {
   Displayable(std::shared_ptr<DisplayVisitable> &dv);
 };
 
-enum Key { NO_KEY, KEY_SPACE, KEY_Q, KEY_LEFT, KEY_RIGHT };
+enum Key {
+  NO_KEY,
+  KEY_SPACE,
+  RELEASE_SPACE,
+  KEY_Q,
+  RELEASE_Q,
+  KEY_LEFT,
+  RELEASE_LEFT,
+  KEY_RIGHT,
+  RELEASE_RIGHT
+};
 
-class DisplayManager : public VisitorDisplay, public Observer, public Observable {
+class DisplayManager : public VisitorDisplay,
+                       public Observer,
+                       public Observable {
 public:
   virtual void addDisplayable(std::shared_ptr<DisplayVisitable> object) = 0;
   virtual void setPlayer(std::shared_ptr<DisplayVisitable> player) = 0;
@@ -68,6 +80,7 @@ class XManager : public DisplayManager {
   void createWindow();
 
   Key convertXKtoKey(int xk_key);
+  Key convertReleasedXKtoKey(int xk_key);
   void removeKeyFromKeysPressed(Key key);
 
 public:

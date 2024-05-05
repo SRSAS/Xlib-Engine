@@ -1,9 +1,11 @@
 #include "../include/physicsEngine.h"
+#include <algorithm>
 #include <chrono>
 #include <memory>
 
-#define FRAME_TIME_DIVISOR 1000.0
+#define FRAME_TIME_DIVISOR 300.0
 #define BORDER_ELASTICITY 0.5 // TODO add elasticity setting to engine interface
+#define FRICTION_CONSTANT 0.6
 
 XPhysicsEngine::XPhysicsEngine(double gravityPull, double jumpImpulse,
                                double walkingSpeed, int worldWidth,
@@ -60,6 +62,14 @@ void XPhysicsEngine::setPlayerSpeed(physics::Speed2D speed) {
 
 void XPhysicsEngine::playerUpdateCoordinates() {
   objectUpdateCoordinates(player);
+}
+void XPhysicsEngine::playerApplyGravity() { objectApplyGravity(player); }
+
+void XPhysicsEngine::playerApplyFloorFriction() {
+  if (playerWalkingLeft || playerWalkingRight) {
+    return;
+  }
+  objectApplyFloorFriction(player);
 }
 
 void XPhysicsEngine::objectJump(std::shared_ptr<GameObject> &gameObject) {
@@ -133,10 +143,11 @@ void XPhysicsEngine::setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
 void XPhysicsEngine::objectUpdateCoordinates(
     std::shared_ptr<GameObject> &gameObject) {
   gameObject->speed +=
-      physics::Speed2D(gameObject->acceleration *
-                       (frameTimeElapsed.count() / FRAME_TIME_DIVISOR));
+      physics::Speed2D(gameObject->acceleration * frameTimeElapsed.count());
   gameObject->position += physics::Position2D(
       gameObject->speed * (frameTimeElapsed.count() / FRAME_TIME_DIVISOR));
+
+  gameObject->acceleration = physics::Acceleration2D(0, 0);
 
   // TODO add elasticity setting to engine interface
   if (isTouchingCeilling(gameObject)) {
@@ -171,37 +182,63 @@ void XPhysicsEngine::objectUpdateCoordinates(
   }
 }
 
+void XPhysicsEngine::objectApplyGravity(
+    std::shared_ptr<GameObject> &gameObject) {
+  gameObject->acceleration += gravity;
+}
+
+void XPhysicsEngine::objectApplyFloorFriction(
+    std::shared_ptr<GameObject> &gameObject) {
+
+  double initialXSpeed = gameObject->speed.x;
+  if (initialXSpeed == 0.0) {
+    return;
+  }
+
+  int initialSign = (initialXSpeed > 0) - (initialXSpeed < 0);
+  physics::Force2D friction(0, 0);
+  double maxFriction = gameObject->mass * gravity.y * FRICTION_CONSTANT;
+  double forceToStopXMovement =
+      ((gameObject->speed.x / frameTimeElapsed.count()) +
+       gameObject->acceleration.x) *
+      gameObject->mass;
+
+  friction.x = (-initialSign) *
+               std::min(std::abs(maxFriction), std::abs(forceToStopXMovement));
+  objectApplyForce(gameObject, friction);
+}
+
 void XPhysicsEngine::playerSetWalkingSpeed(double speed) { walk.x = speed; }
 
 void XPhysicsEngine::playerSetWalkingLeft() {
-  if (!playerWalkingLeft) {
-    walk.x = -walk.x;
-    playerApplyForce(walk);
-    walk.x = -walk.x;
-  }
+  //  if (!playerWalkingLeft) {
+  //    walk.x = -walk.x;
+  //    player->speed += walk;
+  //    walk.x = -walk.x;
+  //  }
   playerWalkingLeft = true;
 }
 
 void XPhysicsEngine::playerUnsetWalkingLeft() {
-  if (playerWalkingLeft) {
-    playerApplyForce(walk);
-  }
+  //  if (playerWalkingLeft) {
+  //    player->speed += walk;
+  //  }
   playerWalkingLeft = false;
 }
 
 void XPhysicsEngine::playerSetWalkingRight() {
-  if (!playerWalkingRight) {
-    playerApplyForce(walk);
-  }
+  //  if (!playerWalkingRight) {
+  //    player->speed += walk;
+  //  }
   playerWalkingRight = true;
 }
 
 void XPhysicsEngine::playerUnsetWalkingRight() {
-  if (playerWalkingRight) {
-    walk.x = -walk.x;
-    playerApplyForce(walk);
-    walk.x = -walk.x;
-  }
+  //  if (playerWalkingRight) {
+  //    walk.x = -walk.x;
+  //    player->speed += walk;
+  //    walk.x = -walk.x;
+  //  }
   playerWalkingRight = false;
 }
 
@@ -241,9 +278,21 @@ void XPhysicsEngine::tick() {
 
   frameStartTime = std::chrono::high_resolution_clock::now();
 
-  playerApplyForce(gravity);
-  playerUpdateCoordinates();
+  if (playerWalkingRight) {
+    player->speed.x = walk.x;
+  }
+  if (playerWalkingLeft) {
+    player->speed.x = -walk.x;
+  }
+  if (playerWalkingLeft && playerWalkingRight) {
+    player->speed.x = 0;
+  }
 
+  playerApplyGravity();
+  playerUpdateCoordinates();
+  if (isTouchingFloor(player)) {
+    playerApplyFloorFriction();
+  }
   //  std::cout << "Player state:" << std::endl;
   //  std::cout << "Position: X = " << player->position.x
   //            << " Y = " << player->position.y << std::endl;
@@ -255,8 +304,9 @@ void XPhysicsEngine::tick() {
   //  std::cout << "Mass: " << player->mass << std::endl << std::endl;
   //
   for (auto iter = gameObjects.begin(); iter != gameObjects.end(); iter++) {
-    objectApplyForce((*iter), gravity);
-    objectUpdateCoordinates((*iter));
+    objectApplyGravity(*iter);
+    objectUpdateCoordinates(*iter);
+    objectApplyFloorFriction(*iter);
   }
 
   notifyAll();

@@ -67,6 +67,21 @@ Key XManager::convertXKtoKey(int xk_key) {
   }
 }
 
+Key XManager::convertReleasedXKtoKey(int xk_key) {
+  switch (xk_key) {
+  case XK_q:
+    return RELEASE_Q;
+  case XK_space:
+    return RELEASE_SPACE;
+  case XK_Left:
+    return RELEASE_LEFT;
+  case XK_Right:
+    return RELEASE_RIGHT;
+  default:
+    return NO_KEY;
+  }
+}
+
 void XManager::removeKeyFromKeysPressed(Key key) {
   auto iter = keysPressed.begin();
   while (iter != keysPressed.end() && (*iter) != key) {
@@ -190,9 +205,9 @@ void XManager::handleEvents() {
       break;
     }
     case KeyRelease: {
-      //      int xk_key = XLookupKeysym(&event.xkey, 0);
-      //      Key pressedKey = convertXKtoKey(xk_key);
-      //      removeKeyFromKeysPressed(pressedKey);
+      int xk_key = XLookupKeysym(&event.xkey, 0);
+      Key releasedKey = convertReleasedXKtoKey(xk_key);
+      keysPressed.push_back(releasedKey);
       break;
     }
 
