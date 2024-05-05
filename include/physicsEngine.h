@@ -11,49 +11,53 @@
 
 struct PhysicsEngine {
   // Add game objects
-  virtual void setPlayer(std::shared_ptr<GameObject> player);
-  virtual void addGameObject(std::shared_ptr<GameObject> gameObject);
+  virtual void setPlayer(std::shared_ptr<GameObject> player) = 0;
+  virtual void addGameObject(std::shared_ptr<GameObject> gameObject) = 0;
 
   // Remove game objects
-  virtual void removePlayer();
+  virtual void removePlayer() = 0;
   /**
    * Remove the game object with the given ID
    *
    * @param gameObject shared_ptr to game object
    * @return True if the object existed, False otherwise
    */
-  virtual bool removeGameObject(std::shared_ptr<GameObject> &gameObject);
+  virtual bool removeGameObject(std::shared_ptr<GameObject> &gameObject) = 0;
 
   // Objects movement
-  virtual void playerJump();
-  virtual void setPlayerAt(physics::Position2D position);
-  virtual void playerApplyForce(physics::Force2D force);
-  virtual void setPlayerXSpeed(double speed);
-  virtual void setPlayerYSpeed(double speed);
-  virtual void setPlayerSpeed(physics::Speed2D);
-  virtual void playerUpdateCoordinates();
+  virtual void playerJump() = 0;
+  virtual void setPlayerAt(physics::Position2D position) = 0;
+  virtual void playerApplyForce(physics::Force2D force) = 0;
+  virtual void setPlayerXSpeed(double speed) = 0;
+  virtual void setPlayerYSpeed(double speed) = 0;
+  virtual void setPlayerSpeed(physics::Speed2D) = 0;
+  virtual void playerUpdateCoordinates() = 0;
 
-  virtual void objectJump(std::shared_ptr<GameObject> &gameObject);
+  virtual void objectJump(std::shared_ptr<GameObject> &gameObject) = 0;
   virtual void setObjectAt(std::shared_ptr<GameObject> &gameObject,
-                           physics::Position2D position);
+                           physics::Position2D position) = 0;
   virtual void objectApplyForce(std::shared_ptr<GameObject> &gameObject,
-                                physics::Force2D force);
+                                physics::Force2D force) = 0;
   virtual void setObjectXSpeed(std::shared_ptr<GameObject> &gameObject,
-                               double speed);
+                               double speed) = 0;
   virtual void setObjectYSpeed(std::shared_ptr<GameObject> &gameObject,
-                               double speed);
+                               double speed) = 0;
   virtual void setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
-                              physics::Speed2D);
-  virtual void objectUpdateCoordinates(std::shared_ptr<GameObject> &gameObject);
+                              physics::Speed2D) = 0;
+  virtual void objectUpdateCoordinates(std::shared_ptr<GameObject> &gameObject) = 0;
 
   // Player movement utilities
-  virtual void playerSetWalkingSpeed(double speed);
-  virtual void playerSetWalkingLeft();
-  virtual void playerUnsetWalkingLeft();
-  virtual void playerSetWalkingRight();
-  virtual void playerUnsetWalkingRight();
+  virtual void playerSetWalkingSpeed(double speed) = 0;
+  virtual void playerSetWalkingLeft() = 0;
+  virtual void playerUnsetWalkingLeft() = 0;
+  virtual void playerSetWalkingRight() = 0;
+  virtual void playerUnsetWalkingRight() = 0;
 
-  virtual void tick();
+  virtual void tick() = 0;
+
+  virtual void setWorldSize(int width, int height) = 0;
+  virtual int getWorldWidth() = 0;
+  virtual int getWorldHeight() = 0;
 };
 
 struct XPhysicsEngine : Observable, PhysicsEngine {
@@ -83,13 +87,13 @@ private:
 
   std::vector<std::shared_ptr<Observer>> observers;
 
-  CollisionEngine collisionEngine;
+  std::unique_ptr<CollisionEngine> collisionEngine;
   bool collisions = false;
 
 public:
   XPhysicsEngine(double gravityPull, double jumpImpulse, double walkingSpeed,
                  int worldWidth, int worldHeight, int frameTimeDuration,
-                 CollisionEngine collisionEngine, bool collisions);
+                 CollisionEngine *collisionEngine, bool collisions);
 
   // Add game objects
   void setPlayer(std::shared_ptr<GameObject> player) override;
@@ -152,6 +156,10 @@ public:
    * On each frame, update game objects and notify all observers.
    */
   void tick() override;
+
+  void setWorldSize(int width, int height) override;
+  int getWorldWidth() override;
+  int getWorldHeight() override;
 
 private:
   bool isTouchingCeilling(std::shared_ptr<GameObject> &gameObject);

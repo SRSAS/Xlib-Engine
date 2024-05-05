@@ -9,25 +9,13 @@ Displayable::Displayable(std::shared_ptr<DisplayVisitable> &dv) {
   displayable = dv;
 }
 
-XManager::XManager(int windowWidth, int windowHeight, int borderWidth) {
-  Display *display = XOpenDisplay(NULL);
-  if (display == NULL) {
-    std::cout << "Could not open display." << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  int screenNum = DefaultScreen(display);
-  Window window = XCreateSimpleWindow(
-      display, RootWindow(display, screenNum), WINDOW_DEFAULT_X,
-      WINDOW_DEFAULT_Y, windowWidth, windowHeight, borderWidth,
-      BlackPixel(display, screenNum), BlackPixel(display, screenNum));
-
-  XSelectInput(display, window,
-               KeyPressMask | KeyReleaseMask | StructureNotifyMask);
-  XMapWindow(display, window);
-
-  GC gc = XCreateGC(display, window, 0, nullptr);
+XManager::XManager(int windowWidth, int windowHeight, int borderWidth)
+    : windowWidth(windowWidth), windowHeight(windowHeight),
+      borderWidth(borderWidth) {
+  createWindow();
 }
+
+XManager::~XManager() { destroyWindow(); }
 
 void XManager::visitRectangle(const Rectangle &rectangle) {
   XFillRectangle(display, window, gc, (int)rectangle.position.x,
@@ -39,6 +27,32 @@ void XManager::updateWindowSize() {
   XGetWindowAttributes(display, window, &attributes);
   windowWidth = attributes.width;
   windowHeight = attributes.height;
+}
+
+void XManager::destroyWindow() {
+  XFreeGC(display, gc);
+  XDestroyWindow(display, window);
+  XCloseDisplay(display);
+}
+
+void XManager::createWindow() {
+  display = XOpenDisplay(NULL);
+  if (display == NULL) {
+    std::cout << "Could not open display." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  screenNum = DefaultScreen(display);
+  window = XCreateSimpleWindow(display, RootWindow(display, screenNum), 0, 0,
+                               windowWidth, windowHeight, borderWidth,
+                               BlackPixel(display, screenNum),
+                               BlackPixel(display, screenNum));
+
+  XSelectInput(display, window,
+               KeyPressMask | KeyReleaseMask | StructureNotifyMask);
+  XMapWindow(display, window);
+
+  gc = XCreateGC(display, window, 0, nullptr);
 }
 
 Key XManager::convertXKtoKey(int xk_key) {
@@ -91,8 +105,11 @@ void XManager::onNotified() {
 }
 
 void XManager::addDisplayable(std::shared_ptr<DisplayVisitable> object) {
-  auto displayable = std::make_unique<Displayable>(object);
-  displayables.push_back(displayable);
+  displayables.push_back(std::make_unique<Displayable>(object));
+}
+
+void XManager::setPlayer(std::shared_ptr<DisplayVisitable> player) {
+  this->player = std::make_unique<Displayable>(player);
 }
 
 bool XManager::removeDisplayable(
@@ -110,7 +127,14 @@ bool XManager::removeDisplayable(
   return true;
 }
 
+void XManager::removePlayer() { player = NULL; }
+
 void XManager::setInvisible(std::shared_ptr<DisplayVisitable> &displayable) {
+  if (displayable == player->displayable) {
+    player->display = true;
+    return;
+  }
+
   auto iter = displayables.begin();
   while (iter != displayables.end() && (*iter)->displayable != displayable) {
     iter++;
@@ -123,6 +147,11 @@ void XManager::setInvisible(std::shared_ptr<DisplayVisitable> &displayable) {
   (*iter)->display = false;
 }
 void XManager::setVisible(std::shared_ptr<DisplayVisitable> &displayable) {
+  if (displayable == player->displayable) {
+    player->display = true;
+    return;
+  }
+
   auto iter = displayables.begin();
   while (iter != displayables.end() && (*iter)->displayable != displayable) {
     iter++;
@@ -136,6 +165,7 @@ void XManager::setVisible(std::shared_ptr<DisplayVisitable> &displayable) {
 }
 
 void XManager::draw() {
+  player->displayable->accept(*this);
   for (auto iter = displayables.begin(); iter != displayables.end(); iter++) {
     (*iter)->displayable->accept(*this);
   }
@@ -181,3 +211,20 @@ void XManager::handleEvents() {
 const std::vector<Key> &XManager::getKeyPresses() { return keysPressed; }
 
 void XManager::clearKeyPresses() { keysPressed.clear(); }
+
+void XManager::setWindowSize(int width, int height) {
+  windowWidth = width;
+  windowHeight = height;
+  destroyWindow();
+  createWindow();
+}
+
+void XManager::setBorderWidth(int width) {
+  borderWidth = width;
+  destroyWindow();
+  createWindow();
+}
+
+int XManager::getWindowWidth() { return windowWidth; }
+int XManager::getWindowHeight() { return windowHeight; }
+int XManager::getBorderWidth() { return borderWidth; }

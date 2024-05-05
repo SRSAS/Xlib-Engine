@@ -14,6 +14,12 @@ MockCollisionEngine::getCollisionsWithObject(
   return empty;
 }
 
+bool MockCollisionEngine::objectsCollided(
+    const std::shared_ptr<GameObject> &o1,
+    const std::shared_ptr<GameObject> &o2) {
+  return false;
+}
+
 void MockCollisionEngine::addGameObject(
     std::shared_ptr<GameObject> gameObject) {}
 
@@ -21,4 +27,5 @@ void MockCollisionEngine::removeGameObject(
     std::shared_ptr<GameObject> &gameObject) {}
 
 void MockCollisionEngine::updateObjectQuadrants(
-    GameObject &previousState, std::shared_ptr<GameObject> &newState) {}
+    std::shared_ptr<GameObject> &previousState,
+    std::shared_ptr<GameObject> &newState) {}

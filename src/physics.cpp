@@ -1,199 +1,189 @@
 #include "../include/physics.h"
 
-using namespace physics;
+physics::Force2D physics::Force2D::operator+(const physics::Force2D &vector) {
+  physics::Force2D temp(x + vector.x, y + vector.y);
+  return temp;
+}
 
-Force2D Force2D::operator+(const Force2D &vector) {
+physics::Force2D physics::Force2D::operator-(const physics::Force2D &vector) {
+  physics::Force2D temp(x - vector.x, y - vector.y);
+  return temp;
+}
+
+physics::Force2D physics::Force2D::operator*(const double &scalar) const {
+  physics::Force2D temp(x * scalar, y * scalar);
+  return temp;
+}
+
+physics::Force2D physics::Force2D::operator/(const double &scalar) const {
+  physics::Force2D temp(x / static_cast<double>(scalar), y /static_cast<double>(scalar));
+  return temp;
+}
+
+physics::Force2D &physics::Force2D::operator+=(const physics::Force2D &vector) {
   this->x += vector.x;
   this->y += vector.y;
   return *this;
 }
 
-Force2D Force2D::operator-(const Force2D &vector) {
+physics::Force2D &physics::Force2D::operator-=(const physics::Force2D &vector) {
   this->x -= vector.x;
   this->y -= vector.y;
   return *this;
 }
 
-template <typename number> Force2D Force2D::operator*(const number &vector) {
-  this->x *= vector.x;
-  this->y *= vector.y;
+physics::Force2D &physics::Force2D::operator*=(const double &scalar) {
+  this->x *= scalar;
+  this->y *= scalar;
   return *this;
 }
 
-template <typename number> Force2D Force2D::operator/(const number &vector) {
-  this->x /= vector.x;
-  this->y /= vector.y;
+physics::Force2D &physics::Force2D::operator/=(const double &scalar) {
+  this->x /= scalar;
+  this->y /= scalar;
   return *this;
 }
 
-Force2D &Force2D::operator+=(const Force2D &vector) {
+physics::Acceleration2D
+physics::Acceleration2D::operator+(const physics::Acceleration2D &vector) {
+  physics::Acceleration2D temp(x + vector.x, y + vector.y);
+  return temp;
+}
+
+physics::Acceleration2D
+physics::Acceleration2D::operator-(const physics::Acceleration2D &vector) {
+  physics::Acceleration2D temp(x - vector.x, y - vector.y);
+  return temp;
+}
+
+physics::Acceleration2D
+physics::Acceleration2D::operator*(const double &scalar) {
+  physics::Acceleration2D temp(x * scalar, y * scalar);
+  return temp;
+}
+
+physics::Acceleration2D
+physics::Acceleration2D::operator/(const double &scalar) {
+  physics::Acceleration2D temp(x / scalar, y / scalar);
+  return temp;
+}
+
+physics::Acceleration2D &
+physics::Acceleration2D::operator+=(const physics::Acceleration2D &vector) {
   this->x += vector.x;
   this->y += vector.y;
   return *this;
 }
 
-Force2D &Force2D::operator-=(const Force2D &vector) {
+physics::Acceleration2D &
+physics::Acceleration2D::operator-=(const physics::Acceleration2D &vector) {
   this->x -= vector.x;
   this->y -= vector.y;
   return *this;
 }
 
-Force2D &Force2D::operator*=(const Force2D &vector) {
-  this->x *= vector.x;
-  this->y *= vector.y;
+physics::Acceleration2D &
+physics::Acceleration2D::operator*=(const double &scalar) {
+  this->x *= scalar;
+  this->y *= scalar;
   return *this;
 }
 
-Force2D &Force2D::operator/=(const Force2D &vector) {
-  this->x /= vector.x;
-  this->y /= vector.y;
+physics::Acceleration2D &
+physics::Acceleration2D::operator/=(const double &scalar) {
+  this->x /= scalar;
+  this->y /= scalar;
   return *this;
 }
 
-Acceleration2D Acceleration2D::operator+(const Acceleration2D &vector) {
+physics::Speed2D physics::Speed2D::operator+(const physics::Speed2D &vector) {
+  physics::Speed2D temp(x + vector.x, y + vector.y);
+  return temp;
+}
+
+physics::Speed2D physics::Speed2D::operator-(const physics::Speed2D &vector) {
+  physics::Speed2D temp(x - vector.x, y - vector.y);
+  return temp;
+}
+
+physics::Speed2D physics::Speed2D::operator*(const double &scalar) {
+  physics::Speed2D temp(x * scalar, y * scalar);
+  return temp;
+}
+
+physics::Speed2D physics::Speed2D::operator/(const double &scalar) {
+  physics::Speed2D temp(x / scalar, y / scalar);
+  return temp;
+}
+
+physics::Speed2D &physics::Speed2D::operator+=(const physics::Speed2D &vector) {
   this->x += vector.x;
   this->y += vector.y;
   return *this;
 }
 
-Acceleration2D Acceleration2D::operator-(const Acceleration2D &vector) {
+physics::Speed2D &physics::Speed2D::operator-=(const physics::Speed2D &vector) {
   this->x -= vector.x;
   this->y -= vector.y;
   return *this;
 }
 
-template <typename number>
-Acceleration2D Acceleration2D::operator*(const number &vector) {
-  this->x *= vector.x;
-  this->y *= vector.y;
+physics::Speed2D &physics::Speed2D::operator*=(const double &scalar) {
+  this->x *= scalar;
+  this->y *= scalar;
   return *this;
 }
 
-template <typename number>
-Acceleration2D Acceleration2D::operator/(const number &vector) {
-  this->x /= vector.x;
-  this->y /= vector.y;
+physics::Speed2D &physics::Speed2D::operator/=(const double &scalar) {
+  this->x /= scalar;
+  this->y /= scalar;
   return *this;
 }
 
-Acceleration2D &Acceleration2D::operator+=(const Acceleration2D &vector) {
+physics::Position2D
+physics::Position2D::operator+(const physics::Position2D &vector) {
+  physics::Position2D temp(x + vector.x, y + vector.y);
+  return temp;
+}
+
+physics::Position2D
+physics::Position2D::operator-(const physics::Position2D &vector) {
+  physics::Position2D temp(x - vector.x, y - vector.y);
+  return temp;
+}
+
+physics::Position2D physics::Position2D::operator*(const double &scalar) {
+  physics::Position2D temp(x * scalar, y * scalar);
+  return temp;
+}
+
+physics::Position2D physics::Position2D::operator/(const double &scalar) {
+  physics::Position2D temp(x / scalar, y / scalar);
+  return temp;
+}
+
+physics::Position2D &
+physics::Position2D::operator+=(const physics::Position2D &vector) {
   this->x += vector.x;
   this->y += vector.y;
   return *this;
 }
 
-Acceleration2D &Acceleration2D::operator-=(const Acceleration2D &vector) {
+physics::Position2D &
+physics::Position2D::operator-=(const physics::Position2D &vector) {
   this->x -= vector.x;
   this->y -= vector.y;
   return *this;
 }
 
-Acceleration2D &Acceleration2D::operator*=(const Acceleration2D &vector) {
-  this->x *= vector.x;
-  this->y *= vector.y;
+physics::Position2D &physics::Position2D::operator*=(const double &scalar) {
+  this->x *= scalar;
+  this->y *= scalar;
   return *this;
 }
 
-Acceleration2D &Acceleration2D::operator/=(const Acceleration2D &vector) {
-  this->x /= vector.x;
-  this->y /= vector.y;
-  return *this;
-}
-
-Speed2D &Speed2D::operator/=(const Speed2D &vector) {
-  this->x /= vector.x;
-  this->y /= vector.y;
-  return *this;
-}
-
-Speed2D Speed2D::operator+(const Speed2D &vector) {
-  this->x += vector.x;
-  this->y += vector.y;
-  return *this;
-}
-
-Speed2D Speed2D::operator-(const Speed2D &vector) {
-  this->x -= vector.x;
-  this->y -= vector.y;
-  return *this;
-}
-
-template <typename number> Speed2D Speed2D::operator*(const number &vector) {
-  this->x *= vector.x;
-  this->y *= vector.y;
-  return *this;
-}
-
-template <typename number> Speed2D Speed2D::operator/(const number &vector) {
-  this->x /= vector.x;
-  this->y /= vector.y;
-  return *this;
-}
-
-Speed2D &Speed2D::operator+=(const Speed2D &vector) {
-  this->x += vector.x;
-  this->y += vector.y;
-  return *this;
-}
-
-Speed2D &Speed2D::operator-=(const Speed2D &vector) {
-  this->x -= vector.x;
-  this->y -= vector.y;
-  return *this;
-}
-
-Speed2D &Speed2D::operator*=(const Speed2D &vector) {
-  this->x *= vector.x;
-  this->y *= vector.y;
-  return *this;
-}
-
-Position2D &Position2D::operator*=(const Position2D &vector) {
-  this->x *= vector.x;
-  this->y *= vector.y;
-  return *this;
-}
-
-Position2D &Position2D::operator/=(const Position2D &vector) {
-  this->x += vector.x;
-  this->y += vector.y;
-  return *this;
-}
-
-Position2D Position2D::operator+(const Position2D &vector) {
-  this->x += vector.x;
-  this->y += vector.y;
-  return *this;
-}
-
-Position2D Position2D::operator-(const Position2D &vector) {
-  this->x -= vector.x;
-  this->y -= vector.y;
-  return *this;
-}
-
-template <typename number>
-Position2D Position2D::operator*(const number &vector) {
-  this->x *= vector.x;
-  this->y *= vector.y;
-  return *this;
-}
-
-template <typename number>
-Position2D Position2D::operator/(const number &vector) {
-  this->x += vector.x;
-  this->y += vector.y;
-  return *this;
-}
-
-Position2D &Position2D::operator+=(const Position2D &vector) {
-  this->x += vector.x;
-  this->y += vector.y;
-  return *this;
-}
-
-Position2D &Position2D::operator-=(const Position2D &vector) {
-  this->x -= vector.x;
-  this->y -= vector.y;
+physics::Position2D &physics::Position2D::operator/=(const double &scalar) {
+  this->x /= scalar;
+  this->y /= scalar;
   return *this;
 }

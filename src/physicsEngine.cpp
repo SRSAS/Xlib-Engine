@@ -8,11 +8,13 @@
 XPhysicsEngine::XPhysicsEngine(double gravityPull, double jumpImpulse,
                                double walkingSpeed, int worldWidth,
                                int worldHeight, int frameTimeDuration,
-                               CollisionEngine collisionEngine, bool collisions)
+                               CollisionEngine *collisionEngine,
+                               bool collisions)
     : jump(0, -jumpImpulse), gravity(0, gravityPull), walk(walkingSpeed, 0),
       worldWidth(worldWidth), worldHeight(worldHeight),
-      frameTimeDuration(frameTimeDuration), collisions(collisions) {
+      frameTimeDuration(frameTimeDuration) {
   auto frameStartTime = std::chrono::high_resolution_clock::now();
+  this->collisionEngine = std::unique_ptr<CollisionEngine>(collisionEngine);
 }
 
 void XPhysicsEngine::setPlayer(std::shared_ptr<GameObject> player) {
@@ -45,8 +47,7 @@ void XPhysicsEngine::setPlayerAt(physics::Position2D position) {
 }
 
 void XPhysicsEngine::playerApplyForce(physics::Force2D force) {
-  auto acceleration = physics::Acceleration2D(force / player->mass);
-  player->acceleration += acceleration;
+  player->acceleration += force / player->mass;
 }
 
 void XPhysicsEngine::setPlayerXSpeed(double speed) { player->speed.x = speed; }
@@ -84,6 +85,11 @@ void XPhysicsEngine::setObjectAt(std::shared_ptr<GameObject> &gameObject,
   }
 
   (*iter)->position = position;
+}
+
+void XPhysicsEngine::objectApplyForce(std::shared_ptr<GameObject> &gameObject,
+                                physics::Force2D force) {
+  gameObject->acceleration += force / gameObject->mass;
 }
 
 void XPhysicsEngine::setObjectXSpeed(std::shared_ptr<GameObject> &gameObject,
@@ -150,11 +156,11 @@ void XPhysicsEngine::objectUpdateCoordinates(
   }
 
   if (collisions) {
-    GameObject copy = gameObject->clone();
-    collisionEngine.updateObjectQuadrants(copy, gameObject);
+    std::shared_ptr<GameObject> copy = gameObject->clone();
+    collisionEngine->updateObjectQuadrants(copy, gameObject);
 
     std::vector<std::shared_ptr<GameObject>> colliders =
-        collisionEngine.getCollisionsWithObject(gameObject);
+        collisionEngine->getCollisionsWithObject(gameObject);
 
     for (auto iter = colliders.begin(); iter != colliders.end(); iter++) {
       onCollision(gameObject, (*iter));
@@ -241,6 +247,13 @@ void XPhysicsEngine::tick() {
 
   notifyAll();
 }
+
+void XPhysicsEngine::setWorldSize(int width, int height) {
+  worldWidth = width;
+  worldHeight = height;
+}
+int XPhysicsEngine::getWorldWidth() { return worldWidth; }
+int XPhysicsEngine::getWorldHeight() { return worldHeight; }
 
 bool XPhysicsEngine::isTouchingCeilling(
     std::shared_ptr<GameObject> &gameObject) {

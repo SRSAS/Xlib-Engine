@@ -30,7 +30,7 @@ struct GameObject : DisplayVisitable {
   GameObject(int id, double width, double height, double mass, double x,
              double y);
 
-  virtual GameObject clone();
+  virtual std::shared_ptr<GameObject> clone() = 0;
 };
 
 typedef enum { RECTANGLE } GameObjectType;
@@ -43,9 +43,9 @@ struct Rectangle : GameObject {
             double y)
       : GameObject(id, width, height, mass, x, y) {}
 
-  void accept(VisitorDisplay visitor) override;
+  void accept(VisitorDisplay &visitor) override;
 
-  GameObject clone() override;
+  std::shared_ptr<GameObject> clone() override;
 };
 
 struct GameObjectFactory {

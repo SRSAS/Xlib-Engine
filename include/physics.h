@@ -16,13 +16,13 @@ struct Force2D : Vector2D {
 
   Force2D operator+(const Force2D &vector);
   Force2D operator-(const Force2D &vector);
-  template <typename number> Force2D operator*(const number &scalar);
-  template <typename number> Force2D operator/(const number &scalar);
+  Force2D operator*(const double &scalar) const;
+  Force2D operator/(const double &scalar) const;
 
   Force2D &operator+=(const Force2D &other);
   Force2D &operator-=(const Force2D &other);
-  Force2D &operator*=(const Force2D &other);
-  Force2D &operator/=(const Force2D &other);
+  Force2D &operator*=(const double &scalar);
+  Force2D &operator/=(const double &scalar);
 };
 
 struct Acceleration2D : Vector2D {
@@ -32,13 +32,13 @@ struct Acceleration2D : Vector2D {
 
   Acceleration2D operator+(const Acceleration2D &vector);
   Acceleration2D operator-(const Acceleration2D &vector);
-  template <typename number> Acceleration2D operator*(const number &scalar);
-  template <typename number> Acceleration2D operator/(const number &scalar);
+  Acceleration2D operator*(const double &scalar);
+  Acceleration2D operator/(const double &scalar);
 
   Acceleration2D &operator+=(const Acceleration2D &other);
   Acceleration2D &operator-=(const Acceleration2D &other);
-  Acceleration2D &operator*=(const Acceleration2D &other);
-  Acceleration2D &operator/=(const Acceleration2D &other);
+  Acceleration2D &operator*=(const double &scalar);
+  Acceleration2D &operator/=(const double &scalar);
 };
 
 struct Speed2D : Vector2D {
@@ -48,13 +48,13 @@ struct Speed2D : Vector2D {
 
   Speed2D operator+(const Speed2D &vector);
   Speed2D operator-(const Speed2D &vector);
-  template <typename number> Speed2D operator*(const number &scalar);
-  template <typename number> Speed2D operator/(const number &scalar);
+  Speed2D operator*(const double &scalar);
+  Speed2D operator/(const double &scalar);
 
   Speed2D &operator+=(const Speed2D &other);
   Speed2D &operator-=(const Speed2D &other);
-  Speed2D &operator*=(const Speed2D &other);
-  Speed2D &operator/=(const Speed2D &other);
+  Speed2D &operator*=(const double &scalar);
+  Speed2D &operator/=(const double &scalar);
 };
 
 struct Position2D : Vector2D {
@@ -64,13 +64,13 @@ struct Position2D : Vector2D {
 
   Position2D operator+(const Position2D &vector);
   Position2D operator-(const Position2D &vector);
-  template <typename number> Position2D operator*(const number &scalar);
-  template <typename number> Position2D operator/(const number &scalar);
+  Position2D operator*(const double &scalar);
+  Position2D operator/(const double &scalar);
 
   Position2D &operator+=(const Position2D &other);
   Position2D &operator-=(const Position2D &other);
-  Position2D &operator*=(const Position2D &other);
-  Position2D &operator/=(const Position2D &other);
+  Position2D &operator*=(const double &scalar);
+  Position2D &operator/=(const double &scalar);
 };
 
 } // namespace physics

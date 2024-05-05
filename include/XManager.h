@@ -23,19 +23,27 @@ enum Key { NO_KEY, KEY_SPACE, KEY_Q, KEY_LEFT, KEY_RIGHT };
 
 class DisplayManager {
 public:
-  virtual void addDisplayable(const std::shared_ptr<DisplayVisitable> object);
+  virtual void addDisplayable(std::shared_ptr<DisplayVisitable> object) = 0;
+  virtual void setPlayer(std::shared_ptr<DisplayVisitable> player) = 0;
   virtual bool
-  removeDisplayable(std::shared_ptr<DisplayVisitable> &displayable);
-  virtual void setInvisible(std::shared_ptr<DisplayVisitable> &displayable);
-  virtual void setVisible(std::shared_ptr<DisplayVisitable> &displayable);
+  removeDisplayable(std::shared_ptr<DisplayVisitable> &displayable) = 0;
+  virtual void removePlayer() = 0;
+  virtual void setInvisible(std::shared_ptr<DisplayVisitable> &displayable) = 0;
+  virtual void setVisible(std::shared_ptr<DisplayVisitable> &displayable) = 0;
 
-  virtual void draw();
-  virtual void erase();
+  virtual void draw() = 0;
+  virtual void erase() = 0;
 
-  virtual void handleEvents();
+  virtual void handleEvents() = 0;
 
-  virtual const std::vector<Key> &getKeyPresses();
-  virtual void clearKeyPresses();
+  virtual const std::vector<Key> &getKeyPresses() = 0;
+  virtual void clearKeyPresses() = 0;
+
+  virtual void setWindowSize(int width, int height) = 0;
+  virtual void setBorderWidth(int width) = 0;
+  virtual int getWindowWidth() = 0;
+  virtual int getWindowHeight() = 0;
+  virtual int getBorderWidth() = 0;
 };
 
 class XManager : VisitorDisplay, Observer, Observable, public DisplayManager {
@@ -46,6 +54,7 @@ class XManager : VisitorDisplay, Observer, Observable, public DisplayManager {
 
   std::vector<Key> keysPressed;
 
+  std::unique_ptr<Displayable> player;
   std::vector<std::unique_ptr<Displayable>> displayables;
 
   std::vector<std::shared_ptr<Observer>> observers;
@@ -54,13 +63,17 @@ class XManager : VisitorDisplay, Observer, Observable, public DisplayManager {
 
   void updateWindowSize();
 
+  void destroyWindow();
+  void createWindow();
+
   Key convertXKtoKey(int xk_key);
   void removeKeyFromKeysPressed(Key key);
 
 public:
   XManager(int windowWidth, int windowHeight, int borderWidth);
+  ~XManager();
 
-  int windowWidth, windowHeight;
+  int windowWidth, windowHeight, borderWidth;
 
   void addObserver(std::shared_ptr<Observer> observer) override;
   void removeObserver(std::shared_ptr<Observer> &observer) override;
@@ -68,9 +81,11 @@ public:
 
   void onNotified() override;
 
-  void addDisplayable(const std::shared_ptr<DisplayVisitable> object) override;
+  void addDisplayable(std::shared_ptr<DisplayVisitable> object) override;
+  void setPlayer(std::shared_ptr<DisplayVisitable> player) override;
   bool
   removeDisplayable(std::shared_ptr<DisplayVisitable> &displayable) override;
+  void removePlayer() override;
   void setInvisible(std::shared_ptr<DisplayVisitable> &displayable) override;
   void setVisible(std::shared_ptr<DisplayVisitable> &displayable) override;
 
@@ -81,6 +96,13 @@ public:
 
   const std::vector<Key> &getKeyPresses() override;
   void clearKeyPresses() override;
+
+  void setWindowSize(int width, int height) override;
+  int getWindowWidth() override;
+  int getWindowHeight() override;
+
+  void setBorderWidth(int width) override;
+  int getBorderWidth() override;
 };
 
 #endif
