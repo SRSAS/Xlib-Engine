@@ -129,29 +129,173 @@ game/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/build
 .PHONY : game/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+src/XManager.o: src/XManager.cpp.o
+.PHONY : src/XManager.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/main.cpp.o
-.PHONY : main.cpp.o
+src/XManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/XManager.cpp.o
+.PHONY : src/XManager.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+src/XManager.i: src/XManager.cpp.i
+.PHONY : src/XManager.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/main.cpp.i
-.PHONY : main.cpp.i
+src/XManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/XManager.cpp.i
+.PHONY : src/XManager.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+src/XManager.s: src/XManager.cpp.s
+.PHONY : src/XManager.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/main.cpp.s
-.PHONY : main.cpp.s
+src/XManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/XManager.cpp.s
+.PHONY : src/XManager.cpp.s
+
+src/Xlib_Engine.o: src/Xlib_Engine.cpp.o
+.PHONY : src/Xlib_Engine.o
+
+# target to build an object file
+src/Xlib_Engine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/Xlib_Engine.cpp.o
+.PHONY : src/Xlib_Engine.cpp.o
+
+src/Xlib_Engine.i: src/Xlib_Engine.cpp.i
+.PHONY : src/Xlib_Engine.i
+
+# target to preprocess a source file
+src/Xlib_Engine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/Xlib_Engine.cpp.i
+.PHONY : src/Xlib_Engine.cpp.i
+
+src/Xlib_Engine.s: src/Xlib_Engine.cpp.s
+.PHONY : src/Xlib_Engine.s
+
+# target to generate assembly for a file
+src/Xlib_Engine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/Xlib_Engine.cpp.s
+.PHONY : src/Xlib_Engine.cpp.s
+
+src/collisionEngine.o: src/collisionEngine.cpp.o
+.PHONY : src/collisionEngine.o
+
+# target to build an object file
+src/collisionEngine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/collisionEngine.cpp.o
+.PHONY : src/collisionEngine.cpp.o
+
+src/collisionEngine.i: src/collisionEngine.cpp.i
+.PHONY : src/collisionEngine.i
+
+# target to preprocess a source file
+src/collisionEngine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/collisionEngine.cpp.i
+.PHONY : src/collisionEngine.cpp.i
+
+src/collisionEngine.s: src/collisionEngine.cpp.s
+.PHONY : src/collisionEngine.s
+
+# target to generate assembly for a file
+src/collisionEngine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/collisionEngine.cpp.s
+.PHONY : src/collisionEngine.cpp.s
+
+src/game.o: src/game.cpp.o
+.PHONY : src/game.o
+
+# target to build an object file
+src/game.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/game.cpp.o
+.PHONY : src/game.cpp.o
+
+src/game.i: src/game.cpp.i
+.PHONY : src/game.i
+
+# target to preprocess a source file
+src/game.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/game.cpp.i
+.PHONY : src/game.cpp.i
+
+src/game.s: src/game.cpp.s
+.PHONY : src/game.s
+
+# target to generate assembly for a file
+src/game.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/game.cpp.s
+.PHONY : src/game.cpp.s
+
+src/gameObjects.o: src/gameObjects.cpp.o
+.PHONY : src/gameObjects.o
+
+# target to build an object file
+src/gameObjects.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects.cpp.o
+.PHONY : src/gameObjects.cpp.o
+
+src/gameObjects.i: src/gameObjects.cpp.i
+.PHONY : src/gameObjects.i
+
+# target to preprocess a source file
+src/gameObjects.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects.cpp.i
+.PHONY : src/gameObjects.cpp.i
+
+src/gameObjects.s: src/gameObjects.cpp.s
+.PHONY : src/gameObjects.s
+
+# target to generate assembly for a file
+src/gameObjects.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects.cpp.s
+.PHONY : src/gameObjects.cpp.s
+
+src/physics.o: src/physics.cpp.o
+.PHONY : src/physics.o
+
+# target to build an object file
+src/physics.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/physics.cpp.o
+.PHONY : src/physics.cpp.o
+
+src/physics.i: src/physics.cpp.i
+.PHONY : src/physics.i
+
+# target to preprocess a source file
+src/physics.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/physics.cpp.i
+.PHONY : src/physics.cpp.i
+
+src/physics.s: src/physics.cpp.s
+.PHONY : src/physics.s
+
+# target to generate assembly for a file
+src/physics.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/physics.cpp.s
+.PHONY : src/physics.cpp.s
+
+src/physicsEngine.o: src/physicsEngine.cpp.o
+.PHONY : src/physicsEngine.o
+
+# target to build an object file
+src/physicsEngine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/physicsEngine.cpp.o
+.PHONY : src/physicsEngine.cpp.o
+
+src/physicsEngine.i: src/physicsEngine.cpp.i
+.PHONY : src/physicsEngine.i
+
+# target to preprocess a source file
+src/physicsEngine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/physicsEngine.cpp.i
+.PHONY : src/physicsEngine.cpp.i
+
+src/physicsEngine.s: src/physicsEngine.cpp.s
+.PHONY : src/physicsEngine.s
+
+# target to generate assembly for a file
+src/physicsEngine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/physicsEngine.cpp.s
+.PHONY : src/physicsEngine.cpp.s
 
 # Help Target
 help:
@@ -162,9 +306,27 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... game"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... src/XManager.o"
+	@echo "... src/XManager.i"
+	@echo "... src/XManager.s"
+	@echo "... src/Xlib_Engine.o"
+	@echo "... src/Xlib_Engine.i"
+	@echo "... src/Xlib_Engine.s"
+	@echo "... src/collisionEngine.o"
+	@echo "... src/collisionEngine.i"
+	@echo "... src/collisionEngine.s"
+	@echo "... src/game.o"
+	@echo "... src/game.i"
+	@echo "... src/game.s"
+	@echo "... src/gameObjects.o"
+	@echo "... src/gameObjects.i"
+	@echo "... src/gameObjects.s"
+	@echo "... src/physics.o"
+	@echo "... src/physics.i"
+	@echo "... src/physics.s"
+	@echo "... src/physicsEngine.o"
+	@echo "... src/physicsEngine.i"
+	@echo "... src/physicsEngine.s"
 .PHONY : help
 
 

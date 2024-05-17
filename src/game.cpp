@@ -1,4 +1,4 @@
-#include "../include/Xlib_Engine.h"
+#include "Xlib_Engine.h"
 
 #define INITIAL_WINDOW_WIDTH 400
 #define INITIAL_WINDOW_HEIGHT 300

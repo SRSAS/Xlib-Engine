@@ -1,4 +1,4 @@
-#include "../include/Xlib_Engine.h"
+#include "Xlib_Engine.h"
 #include <memory>
 
 void WindowChangeObserver::onNotified() { gameEngine->updateWorldSize(); }
@@ -26,7 +26,7 @@ GameEngine::GameEngine(int windowWidth, int windowHeight, int borderWidth,
 }
 
 void GameEngine::updateWorldSize() {
-  //  std::cout << "Updating world size!" << std::endl;
+//  std::cout << "Updating world size!" << std::endl;
   physicsEngine->setWorldSize(displayManager->getWindowWidth(),
                               displayManager->getWindowHeight());
 }

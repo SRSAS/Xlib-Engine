@@ -1,4 +1,4 @@
-#include "../include/physics.h"
+#include "physics.h"
 
 physics::Force2D physics::Force2D::operator+(const physics::Force2D &vector) {
   physics::Force2D temp(x + vector.x, y + vector.y);

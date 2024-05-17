@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/game.dir/main.cpp.o -o game  /usr/lib64/libX11.so
+/usr/bin/c++ CMakeFiles/game.dir/src/XManager.cpp.o CMakeFiles/game.dir/src/Xlib_Engine.cpp.o CMakeFiles/game.dir/src/collisionEngine.cpp.o CMakeFiles/game.dir/src/game.cpp.o CMakeFiles/game.dir/src/gameObjects.cpp.o CMakeFiles/game.dir/src/physics.cpp.o CMakeFiles/game.dir/src/physicsEngine.cpp.o -o game  /usr/lib64/libX11.so

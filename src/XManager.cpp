@@ -1,4 +1,4 @@
-#include "../include/XManager.h"
+#include "XManager.h"
 #include <X11/keysym.h>
 #include <cstdlib>
 #include <memory>

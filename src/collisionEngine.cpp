@@ -1,4 +1,4 @@
-#include "../include/collisionEngine.h"
+#include "collisionEngine.h"
 #include <memory>
 #include <vector>
 

@@ -1,4 +1,4 @@
-#include "../include/gameObjects.h"
+#include "gameObjects.h"
 #include <memory>
 
 GameObject::GameObject(int id, double width, double height, double mass)
