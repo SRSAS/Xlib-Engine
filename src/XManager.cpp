@@ -1,4 +1,5 @@
 #include "XManager.h"
+#include "designPatterns.h"
 #include <X11/keysym.h>
 #include <cstdlib>
 #include <memory>
@@ -83,14 +84,7 @@ Key XManager::convertReleasedXKtoKey(int xk_key) {
 }
 
 void XManager::removeKeyFromKeysPressed(Key key) {
-  auto iter = keysPressed.begin();
-  while (iter != keysPressed.end() && (*iter) != key) {
-    iter++;
-  }
-  if (iter == keysPressed.end()) {
-    return;
-  }
-  keysPressed.erase(iter);
+  keysPressed.erase(std::remove(keysPressed.begin(), keysPressed.end(), key));
 }
 
 void XManager::addObserver(std::shared_ptr<Observer> observer) {
@@ -98,14 +92,7 @@ void XManager::addObserver(std::shared_ptr<Observer> observer) {
 }
 
 void XManager::removeObserver(std::shared_ptr<Observer> &observer) {
-  auto iter = observers.begin();
-  while (iter != observers.end() && *iter != observer) {
-    iter++;
-  }
-  if (iter == observers.end()) {
-    return;
-  }
-  observers.erase(iter);
+  observers.erase(std::remove(observers.begin(), observers.end(), observer));
 }
 
 void XManager::notifyAll() {
@@ -129,54 +116,47 @@ void XManager::setPlayer(std::shared_ptr<DisplayVisitable> player) {
 
 bool XManager::removeDisplayable(
     std::shared_ptr<DisplayVisitable> &displayable) {
-  auto iter = displayables.begin();
-  while (iter != displayables.end() && (*iter)->displayable != displayable) {
-    iter++;
-  }
+  auto result = std::find_if(displayables.begin(), displayables.end(),
+                             [displayable](std::unique_ptr<Displayable> &d) {
+                               return d->displayable == displayable;
+                             });
 
-  if (iter == displayables.end()) {
+  if (result == displayables.end()) {
     return false;
   }
 
-  displayables.erase(iter);
+  displayables.erase(result);
   return true;
 }
 
 void XManager::removePlayer() { player = NULL; }
 
-void XManager::setInvisible(std::shared_ptr<DisplayVisitable> &displayable) {
+void XManager::setVisibility(std::shared_ptr<DisplayVisitable> &displayable,
+                             bool visibile) {
+
   if (displayable == player->displayable) {
-    player->display = true;
+    player->display = visibile;
     return;
   }
 
-  auto iter = displayables.begin();
-  while (iter != displayables.end() && (*iter)->displayable != displayable) {
-    iter++;
-  }
+  auto result = std::find_if(displayables.begin(), displayables.end(),
+                             [displayable](std::unique_ptr<Displayable> &d) {
+                               return d->displayable == displayable;
+                             });
 
-  if (iter == displayables.end()) {
+  if (result == displayables.end()) {
     return;
   }
 
-  (*iter)->display = false;
+  (*result)->display = visibile;
 }
+
+void XManager::setInvisible(std::shared_ptr<DisplayVisitable> &displayable) {
+  setVisibility(displayable, false);
+}
+
 void XManager::setVisible(std::shared_ptr<DisplayVisitable> &displayable) {
-  if (displayable == player->displayable) {
-    player->display = true;
-    return;
-  }
-
-  auto iter = displayables.begin();
-  while (iter != displayables.end() && (*iter)->displayable != displayable) {
-    iter++;
-  }
-
-  if (iter == displayables.end()) {
-    return;
-  }
-
-  (*iter)->display = true;
+  setVisibility(displayable, true);
 }
 
 void XManager::draw() {

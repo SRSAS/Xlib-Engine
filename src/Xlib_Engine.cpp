@@ -1,4 +1,5 @@
 #include "Xlib_Engine.h"
+#include <algorithm>
 #include <memory>
 
 void WindowChangeObserver::onNotified() { gameEngine->updateWorldSize(); }
@@ -17,8 +18,8 @@ GameEngine::GameEngine(int windowWidth, int windowHeight, int borderWidth,
       gravitationalPull, jumpImpulse, walkingSpeed, windowWidth, windowHeight,
       frameDuration, collisionEngine, collisions);
 
-    windowChangeObserver = std::make_shared<WindowChangeObserver>(this);
-    frameObserver = std::make_shared<FrameObserver>(this);
+  windowChangeObserver = std::make_shared<WindowChangeObserver>(this);
+  frameObserver = std::make_shared<FrameObserver>(this);
 
   addObserver(displayManager);
   displayManager->addObserver(windowChangeObserver);
@@ -26,7 +27,7 @@ GameEngine::GameEngine(int windowWidth, int windowHeight, int borderWidth,
 }
 
 void GameEngine::updateWorldSize() {
-//  std::cout << "Updating world size!" << std::endl;
+  //  std::cout << "Updating world size!" << std::endl;
   physicsEngine->setWorldSize(displayManager->getWindowWidth(),
                               displayManager->getWindowHeight());
 }
@@ -65,15 +66,11 @@ GameEngine::createNewGameObject(GameObjectType type, int x, int y, int width,
 
 std::shared_ptr<GameObject> &GameEngine::getObjectByID(int objectID) {
   static std::shared_ptr<GameObject> nullPtr;
-  auto iter = gameObjects.begin();
-  while (iter != gameObjects.end() && (*iter)->id != objectID) {
-    iter++;
-  }
-  if (iter == gameObjects.end()) {
-    return nullPtr;
-  }
+  auto result = std::find_if(
+      gameObjects.begin(), gameObjects.end(),
+      [objectID](std::shared_ptr<GameObject> g) { return g->id == objectID; });
 
-  return *iter;
+  return result != gameObjects.end() ? *result : nullPtr;
 }
 
 void GameEngine::run() {
@@ -97,15 +94,8 @@ void GameEngine::addObserver(std::shared_ptr<Observer> observer) {
 }
 
 void GameEngine::removeObserver(std::shared_ptr<Observer> &observer) {
-  auto iter = observers.begin();
-  while (iter != observers.end() && (*iter) != observer) {
-    iter++;
-  }
-  if (iter == observers.end()) {
-    return;
-  }
-
-  observers.erase(iter);
+  observers.erase(std::remove(observers.begin(), observers.end(), observer),
+                  observers.end());
 }
 
 void GameEngine::setNewPlayer(GameObjectType type, int x, int y, int width,
@@ -135,19 +125,19 @@ void GameEngine::removePlayer() {
 }
 
 bool GameEngine::removeGameObject(int objectID) {
-  auto iter = gameObjects.begin();
-  while (iter != gameObjects.end() && (*iter)->id != objectID) {
-    iter++;
-  }
-  if (iter == gameObjects.end()) {
+  auto gameObject = std::find_if(
+      gameObjects.begin(), gameObjects.end(),
+      [objectID](std::shared_ptr<GameObject> g) { return g->id == objectID; });
+
+  if (gameObject == gameObjects.end()) {
     return false;
   }
 
-  std::shared_ptr<DisplayVisitable> displayVisitable = *iter;
+  std::shared_ptr<DisplayVisitable> displayVisitable = *gameObject;
 
-  gameObjects.erase(iter);
+  gameObjects.erase(gameObject);
   displayManager->removeDisplayable(displayVisitable);
-  physicsEngine->removeGameObject(*iter);
+  physicsEngine->removeGameObject(*gameObject);
 
   return true;
 }

@@ -1,5 +1,5 @@
-#include <algorithm>
 #include "physicsEngine.h"
+#include <algorithm>
 #include <chrono>
 #include <memory>
 
@@ -30,15 +30,13 @@ void XPhysicsEngine::addGameObject(std::shared_ptr<GameObject> gameObject) {
 void XPhysicsEngine::removePlayer() { this->player = NULL; }
 
 bool XPhysicsEngine::removeGameObject(std::shared_ptr<GameObject> &gameObject) {
-  auto iter = gameObjects.begin();
-  while (iter != gameObjects.end() && (*iter) != gameObject) {
-    iter++;
-  }
-  if (iter == gameObjects.end()) {
+  auto result = std::find(gameObjects.begin(), gameObjects.end(), gameObject);
+
+  if (result == gameObjects.end()) {
     return false;
   }
 
-  gameObjects.erase(iter);
+  gameObjects.erase(result);
   return true;
 }
 
@@ -73,28 +71,12 @@ void XPhysicsEngine::playerApplyFloorFriction() {
 }
 
 void XPhysicsEngine::objectJump(std::shared_ptr<GameObject> &gameObject) {
-  auto iter = gameObjects.begin();
-  while (iter != gameObjects.end() && (*iter) != gameObject) {
-    iter++;
-  }
-  if (iter == gameObjects.end()) {
-    return;
-  }
-
-  objectApplyForce((*iter), jump);
+  objectApplyForce(gameObject, jump);
 }
 
 void XPhysicsEngine::setObjectAt(std::shared_ptr<GameObject> &gameObject,
                                  physics::Position2D position) {
-  auto iter = gameObjects.begin();
-  while (iter != gameObjects.end() && (*iter) != gameObject) {
-    iter++;
-  }
-  if (iter == gameObjects.end()) {
-    return;
-  }
-
-  (*iter)->position = position;
+  gameObject->position = position;
 }
 
 void XPhysicsEngine::objectApplyForce(std::shared_ptr<GameObject> &gameObject,
@@ -104,40 +86,17 @@ void XPhysicsEngine::objectApplyForce(std::shared_ptr<GameObject> &gameObject,
 
 void XPhysicsEngine::setObjectXSpeed(std::shared_ptr<GameObject> &gameObject,
                                      double speed) {
-  auto iter = gameObjects.begin();
-  while (iter != gameObjects.end() && (*iter) != gameObject) {
-    iter++;
-  }
-  if (iter == gameObjects.end()) {
-    return;
-  }
-
-  (*iter)->speed.x = speed;
+  gameObject->speed.x = speed;
 }
 
 void XPhysicsEngine::setObjectYSpeed(std::shared_ptr<GameObject> &gameObject,
                                      double speed) {
-  auto iter = gameObjects.begin();
-  while (iter != gameObjects.end() && (*iter) != gameObject) {
-    iter++;
-  }
-  if (iter == gameObjects.end()) {
-    return;
-  }
-
-  (*iter)->speed.y = speed;
+  gameObject->speed.y = speed;
 }
 
 void XPhysicsEngine::setObjectSpeed(std::shared_ptr<GameObject> &gameObject,
                                     physics::Speed2D speed) {
-  auto iter = gameObjects.begin();
-  while (iter != gameObjects.end() && (*iter) != gameObject) {
-    iter++;
-  }
-  if (iter == gameObjects.end()) {
-    return;
-  }
-  (*iter)->speed = speed;
+  gameObject->speed = speed;
 }
 
 void XPhysicsEngine::objectUpdateCoordinates(
@@ -250,15 +209,8 @@ void XPhysicsEngine::addObserver(std::shared_ptr<Observer> observer) {
 }
 
 void XPhysicsEngine::removeObserver(std::shared_ptr<Observer> &observer) {
-  auto iter = observers.begin();
-  while (iter != observers.end() && (*iter) != observer) {
-    iter++;
-  }
-  if (iter == observers.end()) {
-    return;
-  }
-
-  observers.erase(iter);
+  observers.erase(std::remove(observers.begin(), observers.end(), observer),
+                  observers.end());
 }
 
 void XPhysicsEngine::notifyAll() {

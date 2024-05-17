@@ -82,6 +82,8 @@ class XManager : public DisplayManager {
   Key convertXKtoKey(int xk_key);
   Key convertReleasedXKtoKey(int xk_key);
   void removeKeyFromKeysPressed(Key key);
+  void setVisibility(std::shared_ptr<DisplayVisitable> &displayable,
+                     bool visibility);
 
 public:
   XManager(int windowWidth, int windowHeight, int borderWidth);
